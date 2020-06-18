@@ -1,0 +1,7 @@
+name: BedWars
+version: ${project.version}
+main: me.qrashi.plugins.bedwars.BedWars
+api-version: 1.14
+prefix: [InvasionBW]
+authors: [InvasionDevs]
+description: A very good BW plugin
