@@ -1,5 +1,7 @@
 package me.qrashi.plugins.bedwars.Utils;
 
+import me.qrashi.plugins.bedwars.Inventories.MainShop;
+import me.qrashi.plugins.bedwars.Inventories.SideBranchesShop;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
@@ -7,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -124,8 +127,21 @@ public class StackCreator implements Listener {
                                             IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                             //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
                                             String args = arg.toString();
+                                            if(command.equals('s')) {
+
+                                                switch (args) {
+                                                    case "main": InvOpener.openDelay(player, MainShop.shop()); break;
+                                                    case "bau": InvOpener.openDelay(player, SideBranchesShop.Baumaterialien());break;
+                                                    case "rüstung": InvOpener.openDelay(player, SideBranchesShop.Rüstung());break;
+                                                    case "werkzeuge": InvOpener.openDelay(player, SideBranchesShop.Werkzeug());break;
+                                                    case "waffen": InvOpener.openDelay(player, SideBranchesShop.Waffen());break;
+                                                    case "bögen": InvOpener.openDelay(player, SideBranchesShop.Boegen());break;
+                                                    default:break;
+                                                }
+                                            }
 
                                         }
+
 
 
                                     }
