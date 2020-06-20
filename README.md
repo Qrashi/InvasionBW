@@ -1,1 +1,3 @@
 # Invasion BW
+This plugin is work in progress.
+Please don't mind it for now...
