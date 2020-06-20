@@ -1,20 +1,25 @@
 package me.qrashi.plugins.bedwars.Maps;
 
-import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Maps.Shops.Shop;
 import me.qrashi.plugins.bedwars.Maps.Spawners.Spawner;
 import me.qrashi.plugins.bedwars.Maps.Spawners.SpawnerType;
-import org.bukkit.Location;
+import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class LocationSaver {
+public class LocationSaver implements Serializable {
 
     private List<Spawner> spawners = Collections.emptyList();
     private List<Shop> shops = Collections.emptyList();
-    private Location specspawn = new Location(BedWars.getWorld(), 0, 0, 0);
-    private Location lobbyspawn = new Location(BedWars.getWorld(), 0, 0, 0);
+    private SerializableLocation specspawn;
+    private SerializableLocation lobbyspawn;
+
+    public LocationSaver(SerializableLocation startloc) {
+        specspawn = startloc;
+        lobbyspawn = startloc;
+    }
 
 
     public boolean hasSpawners()  {
@@ -49,32 +54,28 @@ public class LocationSaver {
         return spawners.get(i);
     }
 
-    public Location getLobbyspawn() {
+    public SerializableLocation getLobbyspawn() {
         return lobbyspawn;
     }
 
-    public void setLobbyspawn(Location lobbyspawn) {
+    public void setLobbyspawn(SerializableLocation lobbyspawn) {
         this.lobbyspawn = lobbyspawn;
     }
 
-    public Spawner getSpawnerAt(int x, int y, int z) {
+    public Spawner getSpawnerAt(SerializableLocation toSearch) {
         for(Spawner spawner : spawners) {
-            if(spawner.getX() == x) {
-                if(spawner.getY() == y) {
-                    if(spawner.getZ() == z) {
-                        return spawner;
-                    }
-                }
+            if(spawner.getLoc().equals(toSearch)) {
+                return spawner;
             }
         }
     return null;
     }
 
-    public Location getSpecspawn() {
+    public SerializableLocation getSpecspawn() {
         return specspawn;
     }
 
-    public void setSpecspawn(Location specspawn) {
+    public void setSpecspawn(SerializableLocation specspawn) {
         this.specspawn = specspawn;
     }
 }

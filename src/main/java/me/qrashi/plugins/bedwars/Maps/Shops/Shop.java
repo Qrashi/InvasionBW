@@ -1,28 +1,27 @@
 package me.qrashi.plugins.bedwars.Maps.Shops;
 
 import me.qrashi.plugins.bedwars.BedWars;
+import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 import org.bukkit.Location;
 
-public class Shop {
+import java.io.Serializable;
 
-    private Location loc = new Location(BedWars.getWorld(), 0, 0, 0);
+public class Shop implements Serializable {
 
-    public Shop(Location shopLocation) {
-        loc.setX(shopLocation.getX());
-        loc.setY(shopLocation.getY());
-        loc.setZ(shopLocation.getZ());
+    private SerializableLocation shopLocation;
+
+    public Shop(SerializableLocation shopLocation) {
+        this.shopLocation = shopLocation;
     }
 
-    public boolean isLocationSet() {
-        return (loc.getY() != 0 && loc.getX() != 0 && loc.getZ() != 0);
+    public Shop() {}
+
+    public SerializableLocation getLoc() {
+        return shopLocation;
     }
 
-    public Location getLoc() {
-        return loc;
-    }
-
-    public void setLoc(Location toSet) {
-        loc = toSet;
+    public void setLoc(SerializableLocation toSet) {
+        shopLocation = toSet;
     }
 
     public void spawn() {

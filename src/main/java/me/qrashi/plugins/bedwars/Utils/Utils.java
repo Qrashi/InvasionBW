@@ -1,14 +1,17 @@
 package me.qrashi.plugins.bedwars.Utils;
 
+import me.qrashi.plugins.bedwars.Maps.Spawners.Spawner;
+import me.qrashi.plugins.bedwars.Maps.Spawners.SpawnerType;
 import me.qrashi.plugins.bedwars.Maps.Teams.Team;
 import me.qrashi.plugins.bedwars.Maps.Teams.TeamColor;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
 
 public final class Utils {
-    private List<Material> materialList;
+    private final List<Material> materialList;
     public Utils() {
         materialList = Arrays.asList(Material.SMOOTH_SANDSTONE, Material.COBWEB, Material.CHEST, Material.ENDER_CHEST, Material.TNT, Material.END_STONE, Material.IRON_BLOCK, Material.STONE);
     }
@@ -42,5 +45,16 @@ public final class Utils {
                 return TeamColor.YELLOW;
         }
     return TeamColor.BLUE;
+    }
+    public static ItemStack getItemFromType(SpawnerType type) {
+        switch (type) {
+            case GOLD:
+                return StackCreator.createStack(Material.GOLD_INGOT, "&6Gold", Arrays.asList("&7The most &6valuable &7item", "&7in the game.", "&7Can be found in the middle of", "&7the map"));
+            case IRON:
+                return StackCreator.createStack(Material.IRON_INGOT, "&7Iron", Arrays.asList("&7Used to buy a lot of armor", "&7in the game."));
+            case BRONZE:
+                return StackCreator.createStack(Material.BRICK, "&cBronze", Arrays.asList("&7Used for almost everything", "&7in the game."));
+        }
+        return null;
     }
 }

@@ -1,14 +1,18 @@
 package me.qrashi.plugins.bedwars.Maps.Teams;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class TeamManager {
+public class TeamManager implements Serializable {
 
-    private List<Team> teams;
+    private final List<Team> teams;
 
     public TeamManager(List<Team> teamList) {
         teams = teamList;
+    }
+    public TeamManager() {teams = Collections.emptyList();
     }
 
     public List<Team> save() {

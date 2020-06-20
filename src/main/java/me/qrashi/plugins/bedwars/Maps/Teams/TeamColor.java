@@ -1,6 +1,8 @@
 package me.qrashi.plugins.bedwars.Maps.Teams;
 
-public enum TeamColor {
+import java.io.Serializable;
+
+public enum TeamColor implements Serializable {
     RED,
     BLUE,
     YELLOW,

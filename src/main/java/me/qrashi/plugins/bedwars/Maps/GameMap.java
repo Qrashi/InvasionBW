@@ -4,27 +4,32 @@ import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBox;
 import me.qrashi.plugins.bedwars.Maps.Teams.Team;
 import me.qrashi.plugins.bedwars.Maps.Teams.TeamManager;
+import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 import me.qrashi.plugins.bedwars.Utils.Utils;
 import org.bukkit.Location;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class GameMap {
+public class GameMap implements Serializable {
     private BoundingBox bbox;
     private String name;
     private boolean avialible;
     private LocationSaver locs;
     private TeamManager teamManager;
 
-    public GameMap(String name, int teamNum, int teamSize, BoundingBox box) {
-        construct(name, teamNum, teamSize, box);
+    public GameMap(String name, int teamNum, int teamSize, BoundingBox box, SerializableLocation toStart) {
+        construct(name, teamNum, teamSize, box, toStart);
     }
-    public GameMap(String name, int teamNum, int teamSize, int x1, int y1, int z1, int x2, int y2, int z2) {
-        construct(name, teamNum, teamSize, new BoundingBox(x1, y1, z1, x2, y2, z2));
+
+    public GameMap() {}
+
+    public GameMap(String name, int teamNum, int teamSize, int x1, int y1, int z1, int x2, int y2, int z2, SerializableLocation toStart) {
+        construct(name, teamNum, teamSize, new BoundingBox(x1, y1, z1, x2, y2, z2), toStart);
     }
-    private void construct(String name, int teamNum, int teamSize, BoundingBox box) {
+    private void construct(String name, int teamNum, int teamSize, BoundingBox box, SerializableLocation toStart) {
         this.name = name;
         this.bbox = box;
         List<Team> teamList = new ArrayList<>();
@@ -32,7 +37,7 @@ public class GameMap {
         IntStream.range(0, teamNum).forEachOrdered(n -> teamList.add(new Team(Utils.numToCol(n), teamSize)));
         this.teamManager = new TeamManager(teamList);
         this.avialible = false;
-        this.locs = new LocationSaver();
+        locs = new LocationSaver(toStart);
     }
 
     public String getName() {

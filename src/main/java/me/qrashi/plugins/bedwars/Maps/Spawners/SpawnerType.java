@@ -1,6 +1,8 @@
 package me.qrashi.plugins.bedwars.Maps.Spawners;
 
-public enum SpawnerType {
+import java.io.Serializable;
+
+public enum SpawnerType implements Serializable {
     BRONZE,
     GOLD,
     IRON

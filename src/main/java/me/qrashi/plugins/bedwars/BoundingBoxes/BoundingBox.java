@@ -1,12 +1,16 @@
 package me.qrashi.plugins.bedwars.BoundingBoxes;
 
-public class BoundingBox {
-    private final int x1;
-    private final int y1;
-    private final int z1;
-    private final int x2;
-    private final int y2;
-    private final int z2;
+import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
+
+import java.io.Serializable;
+
+public class BoundingBox implements Serializable {
+    private int x1 = 0;
+    private int y1 = 0;
+    private int z1 = 0;
+    private int x2 = 0;
+    private int y2 = 0;
+    private int z2 = 0;
     public BoundingBox(int x1, int y1, int z1, int x2, int y2, int z2) {
         if(x1 < x2) {
             this.x1 = x1;
@@ -30,6 +34,12 @@ public class BoundingBox {
             this.z2 = z1;
         }
     }
+    public BoundingBox(SerializableLocation loc1, SerializableLocation loc2) {
+        //stub
+    }
+
+    public BoundingBox() {}
+
     public int getX1() {
         return this.x1;
     }
