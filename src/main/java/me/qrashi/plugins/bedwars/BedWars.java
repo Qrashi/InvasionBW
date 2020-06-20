@@ -7,16 +7,14 @@ import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Maps.MapManager;
 import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 import me.qrashi.plugins.bedwars.Utils.FileManager;
-import me.qrashi.plugins.bedwars.Utils.StackCreator;
+import me.qrashi.plugins.bedwars.Utils.InventoryHandeler;
 import me.qrashi.plugins.bedwars.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,7 +68,7 @@ public final class BedWars extends JavaPlugin {
 
     private void listenerRegistration() {
         PluginManager pluginManager = Bukkit.getPluginManager();
-        pluginManager.registerEvents(new StackCreator(), this);
+        pluginManager.registerEvents(new InventoryHandeler(), this);
     }
 
     public static void setWorld(World world) {

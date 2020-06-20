@@ -1,6 +1,5 @@
 package me.qrashi.plugins.bedwars.Utils;
 
-import me.qrashi.plugins.bedwars.Maps.Spawners.Spawner;
 import me.qrashi.plugins.bedwars.Maps.Spawners.SpawnerType;
 import me.qrashi.plugins.bedwars.Maps.Teams.Team;
 import me.qrashi.plugins.bedwars.Maps.Teams.TeamColor;
@@ -49,11 +48,11 @@ public final class Utils {
     public static ItemStack getItemFromType(SpawnerType type) {
         switch (type) {
             case GOLD:
-                return StackCreator.createStack(Material.GOLD_INGOT, "&6Gold", Arrays.asList("&7The most &6valuable &7item", "&7in the game.", "&7Can be found in the middle of", "&7the map"));
+                return InventoryHandeler.createStack(Material.GOLD_INGOT, "&6Gold", Arrays.asList("&7The most &6valuable &7item", "&7in the game.", "&7Can be found in the middle of", "&7the map"));
             case IRON:
-                return StackCreator.createStack(Material.IRON_INGOT, "&7Iron", Arrays.asList("&7Used to buy a lot of armor", "&7in the game."));
+                return InventoryHandeler.createStack(Material.IRON_INGOT, "&7Iron", Arrays.asList("&7Used to buy a lot of armor", "&7in the game."));
             case BRONZE:
-                return StackCreator.createStack(Material.BRICK, "&cBronze", Arrays.asList("&7Used for almost everything", "&7in the game."));
+                return InventoryHandeler.createStack(Material.BRICK, "&cBronze", Arrays.asList("&7Used for almost everything", "&7in the game."));
         }
         return null;
     }
