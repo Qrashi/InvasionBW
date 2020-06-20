@@ -1,11 +1,14 @@
 package me.qrashi.plugins.bedwars.Listeners;
 
 import me.qrashi.plugins.bedwars.BedWars;
+import me.qrashi.plugins.bedwars.Inventories.MainShop;
+import me.qrashi.plugins.bedwars.Utils.InvOpener;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.Inventory;
 
 public class JoinListener implements Listener {
 
@@ -22,5 +25,6 @@ public class JoinListener implements Listener {
             BedWars.setWorld(player.getLocation().getWorld());
         }
         BedWars.getMapManager().getMap(0).clear();
+        InvOpener.openDelay(event.getPlayer(), MainShop.shop());
     }
 }

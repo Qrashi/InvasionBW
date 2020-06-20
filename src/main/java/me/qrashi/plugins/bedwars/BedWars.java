@@ -7,8 +7,11 @@ import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Maps.MapManager;
 import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 import me.qrashi.plugins.bedwars.Utils.FileManager;
+import me.qrashi.plugins.bedwars.Utils.StackCreator;
 import me.qrashi.plugins.bedwars.Utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -23,11 +26,13 @@ public final class BedWars extends JavaPlugin {
     private static BoundingBoxActions bactions;
     private static Utils utilClass;
     private static MapManager mapManager;
+    private static BedWars instance;
     private FileManager manager;
 
     @Override
     public void onEnable() {
         getLogger().info("Loading map data");
+        instance = this;
         bactions = new BoundingBoxActions();
         utilClass = new Utils();
         manager = new FileManager();
@@ -46,6 +51,7 @@ public final class BedWars extends JavaPlugin {
         getLogger().info("Finishing startup sequence");
         getLogger().info("Registering listeners");
         getServer().getPluginManager().registerEvents(new JoinListener(), this);
+        listenerRegistration();
 
     }
 
@@ -59,6 +65,12 @@ public final class BedWars extends JavaPlugin {
             e.printStackTrace();
         }
         getLogger().info("Saving complete, plugin shut down sequence complete.");
+    }
+
+
+    private void listenerRegistration() {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new StackCreator(), this);
     }
 
     public static void setWorld(World world) {
@@ -76,5 +88,8 @@ public final class BedWars extends JavaPlugin {
     }
     public static MapManager getMapManager() {
         return mapManager;
+    }
+    public static BedWars getInstance() {
+        return instance;
     }
 }
