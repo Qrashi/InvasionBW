@@ -14,7 +14,7 @@ import java.util.Map;
 
 public final class FileManager {
 
-    public void saveToFile(MapManager toSave, String name) throws IOException {
+    public void saveToFile(Object toSave, String name) throws IOException {
         String filePath = BedWars.getPlugin(BedWars.class).getDataFolder().getPath() + name;
         File file = new File(filePath);
         FileOutputStream f = new FileOutputStream(file);
@@ -23,12 +23,12 @@ public final class FileManager {
         s.close();
     }
 
-    public MapManager loadFromFile(String name) throws IOException, ClassNotFoundException {
+    public Object loadFromFile(String name) throws IOException, ClassNotFoundException {
         String filePath = BedWars.getPlugin(BedWars.class).getDataFolder().getPath() + name;
         File file = new File(filePath);
         FileInputStream f = new FileInputStream(file);
         ObjectInputStream s = new ObjectInputStream(f);
-        MapManager toReturn = (MapManager) s.readObject();
+        Object toReturn = s.readObject();
         s.close();
         return toReturn;
     }

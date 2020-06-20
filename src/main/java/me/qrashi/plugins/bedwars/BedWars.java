@@ -30,17 +30,16 @@ public final class BedWars extends JavaPlugin {
         getLogger().info("Loading map data");
         bactions = new BoundingBoxActions();
         utilClass = new Utils();
-        mapManager = new MapManager();
         manager = new FileManager();
+        mapManager = new MapManager();
         //This will only be used until i will be able to save and load maps form a file.
         getLogger().info("Loading Maps from file...");
         GameMap map = new GameMap("TestMap", 2, 2, new BoundingBox(-61, 62, 24, -69, 67, 15), new SerializableLocation(-61, 62, 24));
         List<GameMap> toLoad = Collections.singletonList(map);
         //Please put the file loading in fileLoader.class
-        mapManager.load(toLoad);
         try {
-            manager.saveToFile(mapManager, "/maps.properties");
-        } catch (IOException e) {
+            mapManager.load((List<GameMap>) manager.loadFromFile("/maps.properties"));
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -54,7 +53,11 @@ public final class BedWars extends JavaPlugin {
     public void onDisable() {
         getLogger().info("Saving...");
         //save
-        mapManager.save();
+        try {
+            manager.saveToFile(mapManager.save(),"/maps.properties");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         getLogger().info("Saving complete, plugin shut down sequence complete.");
     }
 
