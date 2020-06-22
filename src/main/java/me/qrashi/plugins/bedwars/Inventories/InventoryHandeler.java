@@ -61,7 +61,7 @@ public class InventoryHandeler implements Listener {
 
     public static Inventory createInventory(String name, int size) {
         Inventory inv = Bukkit.createInventory(null, size, MessageCreator.t(name));
-        IntStream.range(0, 45).forEachOrdered(n -> inv.setItem(n, getNothing()));
+        IntStream.range(0, size).forEachOrdered(n -> inv.setItem(n, getNothing()));
         return inv;
     }
     public static Inventory createInventory(String name) {
