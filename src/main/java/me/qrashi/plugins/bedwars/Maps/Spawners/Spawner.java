@@ -20,8 +20,6 @@ public class Spawner implements Serializable {
         loc = new SerializableLocation(x, y, z);
     }
 
-    public Spawner() {}
-
     public void spawn() {
         BedWars.getWorld().dropItem(loc.getLocation(), Objects.requireNonNull(Utils.getItemFromType(type)));
     }

@@ -21,6 +21,7 @@ public class JoinListener implements Listener {
         event.setJoinMessage(MessageCreator.t("&7[&2+&7] " + player.getName()));
         if (firstJoin) {
             BedWars.setWorld(player.getLocation().getWorld());
+            firstJoin = false;
         }
 
         //not real

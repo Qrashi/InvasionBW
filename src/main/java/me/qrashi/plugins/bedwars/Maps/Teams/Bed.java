@@ -20,7 +20,6 @@ public class Bed implements Serializable {
         loc = new SerializableLocation(x, y, z);
         this.team = correspondingTeam;
     }
-    public Bed() {}
 
     public void destroy() {
         destroyed = true;

@@ -18,7 +18,7 @@ public class SerializableLocation implements Serializable {
         y = yc;
         z = zc;
     }
-    public SerializableLocation(int xc, int yc,  int zc, int ya, int pi) {
+    public SerializableLocation(int xc, int yc, int zc, int ya, int pi) {
         x = xc;
         y = yc;
         z = zc;

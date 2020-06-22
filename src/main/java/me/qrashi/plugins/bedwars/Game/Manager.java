@@ -3,7 +3,6 @@ package me.qrashi.plugins.bedwars.Game;
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Utils.BarSender;
-import me.qrashi.plugins.bedwars.Utils.MessageCreator;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public final class Manager {
@@ -34,5 +33,9 @@ public final class Manager {
     }
     public GameState getGameState() {
         return gameState;
+    }
+
+    public PlayType getPlayType() {
+        return playType;
     }
 }

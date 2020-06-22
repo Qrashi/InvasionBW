@@ -8,7 +8,7 @@ public class MessageCreator {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
     public static String t(String message) {
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return translate(message);
     }
     public static TextComponent generateComponent(String message) {
         return new TextComponent(t(message));

@@ -32,26 +32,29 @@ public class InventoryHandeler implements Listener {
                     case "main":
                         InvOpener.openDelay(player, MainShop.shop());
                         break;
-                    case "bau":
-                        InvOpener.openDelay(player, SideBranchesShop.Baumaterialien());
+                    case "building":
+                        InvOpener.openDelay(player, SideBranchesShop.build());
                         break;
-                    case "rüstung":
-                        InvOpener.openDelay(player, SideBranchesShop.Rüstung());
+                    case "armor":
+                        InvOpener.openDelay(player, SideBranchesShop.armor());
                         break;
-                    case "werkzeuge":
-                        InvOpener.openDelay(player, SideBranchesShop.Werkzeug());
+                    case "tools":
+                        InvOpener.openDelay(player, SideBranchesShop.tools());
                         break;
-                    case "waffen":
-                        InvOpener.openDelay(player, SideBranchesShop.Waffen());
+                    case "weapons":
+                        InvOpener.openDelay(player, SideBranchesShop.weapons());
                         break;
-                    case "bögen":
-                        InvOpener.openDelay(player, SideBranchesShop.Boegen());
+                    case "bows":
+                        InvOpener.openDelay(player, SideBranchesShop.bows());
                         break;
                 }
             case 'o':
                 switch (arguments) {
                     case "setup":
                         InvOpener.openDelay(player, SetupInventory.mainInv());
+                        break;
+                    case "shop":
+                        InvOpener.openDelay(player, MainShop.shop());
                         break;
                 }
         }
@@ -157,22 +160,22 @@ public class InventoryHandeler implements Listener {
                     ItemMeta meta = clicked.getItemMeta();
                     if (meta != null) {
                         if (meta.hasLore()) {
-                            List lore = meta.getLore();
+                            List<String> lore = meta.getLore();
                             if (lore != null) {
                                 if (lore.size() > 0) {
 
-                                    if (ChatColor.stripColor((String) lore.get(lore.size() - 1)).equals("InvasionBW")) {
+                                    if (ChatColor.stripColor(lore.get(lore.size() - 1)).equals("InvasionBW")) {
                                         event.setCancelled(true);
                                     }
                                     if (lore.size() > 1) {
-                                        String commandraw = ChatColor.stripColor((String) lore.get(lore.size() - 2));
+                                        String commandraw = ChatColor.stripColor(lore.get(lore.size() - 2));
                                         HumanEntity player = event.getWhoClicked();
                                         Player playerP = Bukkit.getPlayer(player.getName());
                                         if (playerP != null) {
                                             playerP.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
                                         }
                                         if (commandraw.length() > 0) {
-                                            Character command = commandraw.charAt(0);
+                                            char command = commandraw.charAt(0);
                                             StringBuilder arg = new StringBuilder();
                                             IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                             //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
@@ -197,22 +200,22 @@ public class InventoryHandeler implements Listener {
                     ItemMeta meta = clicked.getItemMeta();
                     if (meta != null) {
                         if (meta.hasLore()) {
-                            List lore = meta.getLore();
+                            List<String> lore = meta.getLore();
                             if (lore != null) {
                                 if (lore.size() > 0) {
 
-                                    if (ChatColor.stripColor((String) lore.get(lore.size() - 1)).equals("InvasionBW")) {
+                                    if (ChatColor.stripColor(lore.get(lore.size() - 1)).equals("InvasionBW")) {
                                         event.setCancelled(true);
                                     }
                                     if (lore.size() > 1) {
-                                        String commandraw = ChatColor.stripColor((String) lore.get(lore.size() - 2));
+                                        String commandraw = ChatColor.stripColor(lore.get(lore.size() - 2));
                                         HumanEntity player = event.getWhoClicked();
                                         Player playerP = Bukkit.getPlayer(player.getName());
                                         if (playerP != null) {
                                             playerP.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
                                         }
                                         if (commandraw.length() > 0) {
-                                            Character command = commandraw.charAt(0);
+                                            char command = commandraw.charAt(0);
                                             StringBuilder arg = new StringBuilder();
                                             IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                             //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
@@ -237,22 +240,22 @@ public class InventoryHandeler implements Listener {
                     ItemMeta meta = clicked.getItemMeta();
                     if (meta != null) {
                         if (meta.hasLore()) {
-                            List lore = meta.getLore();
+                            List<String> lore = meta.getLore();
                             if (lore != null) {
                                 if (lore.size() > 0) {
 
-                                    if (ChatColor.stripColor((String) lore.get(lore.size() - 1)).equals("InvasionBW")) {
+                                    if (ChatColor.stripColor(lore.get(lore.size() - 1)).equals("InvasionBW")) {
                                         event.setCancelled(true);
                                     }
                                     if (lore.size() > 1) {
-                                        String commandraw = ChatColor.stripColor((String) lore.get(lore.size() - 2));
+                                        String commandraw = ChatColor.stripColor(lore.get(lore.size() - 2));
                                         HumanEntity player = event.getPlayer();
                                         Player playerP = Bukkit.getPlayer(player.getName());
                                         if (playerP != null) {
                                             playerP.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
                                         }
                                         if (commandraw.length() > 0) {
-                                            Character command = commandraw.charAt(0);
+                                            char command = commandraw.charAt(0);
                                             StringBuilder arg = new StringBuilder();
                                             IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                             //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
