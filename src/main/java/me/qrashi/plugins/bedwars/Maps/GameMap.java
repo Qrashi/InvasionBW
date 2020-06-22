@@ -6,7 +6,6 @@ import me.qrashi.plugins.bedwars.Maps.Teams.Team;
 import me.qrashi.plugins.bedwars.Maps.Teams.TeamManager;
 import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 import me.qrashi.plugins.bedwars.Utils.Utils;
-import org.bukkit.Location;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -62,6 +61,6 @@ public class GameMap implements Serializable {
         return locs;
     }
     public void clear() {
-        BedWars.getBactions().replace(BedWars.getUtils().getMaterialList(), bbox);
+        BedWars.getActions().replace(BedWars.getUtils().getMaterialList(), bbox);
     }
 }

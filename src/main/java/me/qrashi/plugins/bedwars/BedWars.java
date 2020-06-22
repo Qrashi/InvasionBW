@@ -20,7 +20,7 @@ import java.util.List;
 public final class BedWars extends JavaPlugin {
 
     private static World main;
-    private static BoundingBoxActions bactions;
+    private static BoundingBoxActions actions;
     private static Utils utilClass;
     private static MapManager mapManager;
     private static BedWars instance;
@@ -32,7 +32,7 @@ public final class BedWars extends JavaPlugin {
     public void onEnable() {
         getLogger().info("Loading map data");
         instance = this;
-        bactions = new BoundingBoxActions();
+        actions = new BoundingBoxActions();
         utilClass = new Utils();
         manager = new FileManager();
         mapManager = new MapManager();
@@ -90,8 +90,8 @@ public final class BedWars extends JavaPlugin {
     public static World getWorld() {
         return main;
     }
-    public static BoundingBoxActions getBactions()  {
-        return bactions;
+    public static BoundingBoxActions getActions()  {
+        return actions;
     }
     public static Utils getUtils() {
         return utilClass;
