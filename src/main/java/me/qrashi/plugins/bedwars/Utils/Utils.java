@@ -1,5 +1,6 @@
 package me.qrashi.plugins.bedwars.Utils;
 
+import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
 import me.qrashi.plugins.bedwars.Maps.Spawners.SpawnerType;
 import me.qrashi.plugins.bedwars.Maps.Teams.Team;
 import me.qrashi.plugins.bedwars.Maps.Teams.TeamColor;

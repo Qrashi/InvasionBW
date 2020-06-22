@@ -1,4 +1,4 @@
-package me.qrashi.plugins.bedwars.Utils;
+package me.qrashi.plugins.bedwars.Inventories;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import org.bukkit.Bukkit;

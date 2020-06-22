@@ -1,6 +1,5 @@
 package me.qrashi.plugins.bedwars.Inventories;
 
-import me.qrashi.plugins.bedwars.Utils.InventoryHandeler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
