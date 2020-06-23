@@ -1,5 +1,7 @@
 package me.qrashi.plugins.bedwars.Inventories;
 
+import me.qrashi.plugins.bedwars.BedWars;
+import me.qrashi.plugins.bedwars.Game.PlayType;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -51,10 +54,25 @@ public class InventoryHandeler implements Listener {
             case 'o':
                 switch (arguments) {
                     case "setup":
-                        InvOpener.openDelay(player, SetupInventory.mainInv());
+                        InvOpener.openDelay(player, SetupManager.mainInv());
                         break;
                     case "shop":
                         InvOpener.openDelay(player, MainShop.shop());
+                        break;
+                }
+            case 'p':
+                switch (arguments) {
+                    case "play":
+                        BedWars.getGameManager().setPlayType(PlayType.PLAYING);
+                        InvOpener.openDelay(player, SetupManager.mainInv());
+                        break;
+                    case "build":
+                        BedWars.getGameManager().setPlayType(PlayType.BUILDING);
+                        InvOpener.openDelay(player, SetupManager.mainInv());
+                        break;
+                    case "lobby":
+                        BedWars.getGameManager().setPlayType(PlayType.LOBBY);
+                        InvOpener.openDelay(player, SetupManager.mainInv());
                         break;
                 }
         }
@@ -234,6 +252,46 @@ public class InventoryHandeler implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         ItemStack clicked = event.getItem();
+        if (clicked != null) {
+            if (clicked.getType() != Material.AIR) {
+                if (clicked.hasItemMeta()) {
+                    ItemMeta meta = clicked.getItemMeta();
+                    if (meta != null) {
+                        if (meta.hasLore()) {
+                            List<String> lore = meta.getLore();
+                            if (lore != null) {
+                                if (lore.size() > 0) {
+
+                                    if (ChatColor.stripColor(lore.get(lore.size() - 1)).equals("InvasionBW")) {
+                                        event.setCancelled(true);
+                                    }
+                                    if (lore.size() > 1) {
+                                        String commandraw = ChatColor.stripColor(lore.get(lore.size() - 2));
+                                        HumanEntity player = event.getPlayer();
+                                        Player playerP = Bukkit.getPlayer(player.getName());
+                                        if (playerP != null) {
+                                            playerP.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
+                                        }
+                                        if (commandraw.length() > 0) {
+                                            char command = commandraw.charAt(0);
+                                            StringBuilder arg = new StringBuilder();
+                                            IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
+                                            //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
+                                            String args = arg.toString();
+                                            handleClick(command, args, playerP);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    @EventHandler
+    public void onInventoryClick(PlayerDropItemEvent event) {
+        ItemStack clicked = event.getItemDrop().getItemStack();
         if (clicked != null) {
             if (clicked.getType() != Material.AIR) {
                 if (clicked.hasItemMeta()) {

@@ -38,4 +38,8 @@ public final class Manager {
     public PlayType getPlayType() {
         return playType;
     }
+
+    public void setPlayType(PlayType playType) {
+        this.playType = playType;
+    }
 }

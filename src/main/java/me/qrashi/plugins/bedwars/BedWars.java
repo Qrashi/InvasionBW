@@ -1,11 +1,13 @@
 package me.qrashi.plugins.bedwars;
 
+import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBox;
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBoxActions;
 import me.qrashi.plugins.bedwars.Game.Manager;
 import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
 import me.qrashi.plugins.bedwars.Listeners.JoinListener;
 import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Maps.MapManager;
+import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 import me.qrashi.plugins.bedwars.Utils.BarSender;
 import me.qrashi.plugins.bedwars.Utils.FileManager;
 import me.qrashi.plugins.bedwars.Utils.Utils;
@@ -15,6 +17,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 public final class BedWars extends JavaPlugin {
@@ -41,14 +44,15 @@ public final class BedWars extends JavaPlugin {
 
         //This will only be used until i will be able to save and load maps form a file.
         getLogger().info("Loading Maps from file...");
-        //GameMap map = new GameMap("TestMap", 2, 2, new BoundingBox(-61, 62, 24, -69, 67, 15), new SerializableLocation(-61, 62, 24));
-        //List<GameMap> toLoad = Collections.singletonList(map);
+        GameMap map = new GameMap("TestMap", 2, 2, new BoundingBox(-61, 62, 24, -69, 67, 15), new SerializableLocation(-61, 62, 24));
+        List<GameMap> toLoad = Collections.singletonList(map);
+        mapManager.load(toLoad);
         //Please put the file loading in fileLoader.class
-        try {
-            mapManager.load((List<GameMap>) manager.loadFromFile("/maps.properties"));
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        //try {
+        //    mapManager.load((List<GameMap>) manager.loadFromFile("/maps.properties"));
+        //} catch (IOException | ClassNotFoundException e) {
+         //   e.printStackTrace();
+        //}
 
         getLogger().info("Finishing startup sequence");
         getLogger().info("Registering listeners");
