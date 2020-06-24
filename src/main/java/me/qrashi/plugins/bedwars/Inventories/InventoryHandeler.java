@@ -74,6 +74,30 @@ public class InventoryHandeler implements Listener {
                         BedWars.getGameManager().setPlayType(PlayType.LOBBY);
                         InvOpener.openDelay(player, SetupManager.mainInv());
                         break;
+                    case "lockptype":
+                        SetupManager.setModeLocked(true);
+                        if(BedWars.getGameManager().getPlayType() != PlayType.LOBBY) {
+                            InvOpener.openDelay(player, SetupManager.mainInv());
+                        }
+                        else {
+                            InvOpener.closeDelay(player);
+                        }
+                        BedWars.getGameManager().finalizePlayType();
+                        BedWars.getGameManager().setSetUp(true);
+                        break;
+                }
+            case 'z':
+                switch (arguments) {
+                    case "econf":
+                        EndInventory.confirm(player);
+                        InvOpener.openDelay(player, EndInventory.getInv());
+                        break;
+                    case "eg":
+                        if(EndInventory.isConfirmed()) {
+                            EndInventory.endGame();
+                        }
+                        break;
+
                 }
         }
     }
@@ -292,34 +316,32 @@ public class InventoryHandeler implements Listener {
     @EventHandler
     public void onInventoryClick(PlayerDropItemEvent event) {
         ItemStack clicked = event.getItemDrop().getItemStack();
-        if (clicked != null) {
-            if (clicked.getType() != Material.AIR) {
-                if (clicked.hasItemMeta()) {
-                    ItemMeta meta = clicked.getItemMeta();
-                    if (meta != null) {
-                        if (meta.hasLore()) {
-                            List<String> lore = meta.getLore();
-                            if (lore != null) {
-                                if (lore.size() > 0) {
+        if (clicked.getType() != Material.AIR) {
+            if (clicked.hasItemMeta()) {
+                ItemMeta meta = clicked.getItemMeta();
+                if (meta != null) {
+                    if (meta.hasLore()) {
+                        List<String> lore = meta.getLore();
+                        if (lore != null) {
+                            if (lore.size() > 0) {
 
-                                    if (ChatColor.stripColor(lore.get(lore.size() - 1)).equals("InvasionBW")) {
-                                        event.setCancelled(true);
+                                if (ChatColor.stripColor(lore.get(lore.size() - 1)).equals("InvasionBW")) {
+                                    event.setCancelled(true);
+                                }
+                                if (lore.size() > 1) {
+                                    String commandraw = ChatColor.stripColor(lore.get(lore.size() - 2));
+                                    HumanEntity player = event.getPlayer();
+                                    Player playerP = Bukkit.getPlayer(player.getName());
+                                    if (playerP != null) {
+                                        playerP.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
                                     }
-                                    if (lore.size() > 1) {
-                                        String commandraw = ChatColor.stripColor(lore.get(lore.size() - 2));
-                                        HumanEntity player = event.getPlayer();
-                                        Player playerP = Bukkit.getPlayer(player.getName());
-                                        if (playerP != null) {
-                                            playerP.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
-                                        }
-                                        if (commandraw.length() > 0) {
-                                            char command = commandraw.charAt(0);
-                                            StringBuilder arg = new StringBuilder();
-                                            IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
-                                            //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
-                                            String args = arg.toString();
-                                            handleClick(command, args, playerP);
-                                        }
+                                    if (commandraw.length() > 0) {
+                                        char command = commandraw.charAt(0);
+                                        StringBuilder arg = new StringBuilder();
+                                        IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
+                                        //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
+                                        String args = arg.toString();
+                                        handleClick(command, args, playerP);
                                     }
                                 }
                             }

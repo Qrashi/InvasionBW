@@ -2,8 +2,11 @@ package me.qrashi.plugins.bedwars;
 
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBox;
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBoxActions;
+import me.qrashi.plugins.bedwars.Commands.EndCommand;
 import me.qrashi.plugins.bedwars.Game.Manager;
 import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
+import me.qrashi.plugins.bedwars.Inventories.SetupManager;
+import me.qrashi.plugins.bedwars.Listeners.BlockListeners;
 import me.qrashi.plugins.bedwars.Listeners.JoinListener;
 import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Maps.MapManager;
@@ -19,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public final class BedWars extends JavaPlugin {
 
@@ -58,6 +62,7 @@ public final class BedWars extends JavaPlugin {
         getLogger().info("Registering listeners");
         getServer().getPluginManager().registerEvents(new JoinListener(), this);
         listenerRegistration();
+        commandRegistration();
 
     }
 
@@ -73,10 +78,14 @@ public final class BedWars extends JavaPlugin {
         getLogger().info("Saving complete, plugin shut down sequence complete.");
     }
 
+    private void commandRegistration() {
+        Objects.requireNonNull(getCommand("endgame")).setExecutor(new EndCommand());
+    }
 
     private void listenerRegistration() {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new InventoryHandeler(), this);
+        pluginManager.registerEvents(new BlockListeners(), this);
     }
 
     public static void setWorld(World world) {
@@ -106,4 +115,5 @@ public final class BedWars extends JavaPlugin {
     public static BedWars getInstance() {
         return instance;
     }
+
 }

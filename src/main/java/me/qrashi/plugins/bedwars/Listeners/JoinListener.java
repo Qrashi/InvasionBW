@@ -1,10 +1,13 @@
 package me.qrashi.plugins.bedwars.Listeners;
 
 import me.qrashi.plugins.bedwars.BedWars;
+import me.qrashi.plugins.bedwars.Game.PlayType;
 import me.qrashi.plugins.bedwars.Inventories.ItemStacks;
 import me.qrashi.plugins.bedwars.Inventories.MainShop;
 import me.qrashi.plugins.bedwars.Inventories.InvOpener;
+import me.qrashi.plugins.bedwars.Inventories.SetupManager;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,11 +32,24 @@ public class JoinListener implements Listener {
         InvOpener.openDelay(event.getPlayer(), MainShop.shop());
 
         //real listener
-
         Inventory playerInv = player.getInventory();
-        playerInv.clear();
-        if(player.isOp()) {
-            playerInv.setItem(4, ItemStacks.getJoinItem());
+        if(!SetupManager.getModeLocked()) {
+            playerInv.clear();
+            player.setGameMode(GameMode.SURVIVAL);
+            if (player.isOp()) {
+                playerInv.setItem(4, ItemStacks.getJoinItem());
+            }
+        } else {
+            if(BedWars.getGameManager().getPlayType() == PlayType.LOBBY) {
+                playerInv.clear();
+            }
+            //team item?
+        }
+
+        //"rejoin" listeners
+        if(SetupManager.getModeLocked() && BedWars.getGameManager().getPlayType() == PlayType.LOBBY) {
+            player.setGameMode(GameMode.CREATIVE);
+            player.sendTitle(MessageCreator.t("&6Editing the lobby"), MessageCreator.t("&aHave fun!"), 10, 150, 20);
         }
     }
 }

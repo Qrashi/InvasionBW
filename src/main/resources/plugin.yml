@@ -2,6 +2,11 @@ name: BedWars
 version: ${project.version}
 main: me.qrashi.plugins.bedwars.BedWars
 api-version: 1.14
-prefix: [InvasionBW]
+prefix: InvasionBW
 authors: [InvasionDevs]
 description: A very good BW plugin
+commands:
+  endgame:
+    description: Ends the current game
+    aliases: [e, end]
+    permissions: BedWars.admin
