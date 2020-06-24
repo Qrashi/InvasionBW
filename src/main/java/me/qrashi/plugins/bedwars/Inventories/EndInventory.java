@@ -38,7 +38,9 @@ public class EndInventory {
         confirmed = true;
         Bukkit.getScheduler().runTaskLater(BedWars.getPlugin(BedWars.class), () -> {
             EndInventory.setConfirmed(false);
-            Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cThe game token expired."));
+            if(BedWars.getGameManager().isSetUp()) {
+                Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cThe game token expired."));
+            }
         }, 200);
     }
 
@@ -48,7 +50,7 @@ public class EndInventory {
             for(Player player : Bukkit.getOnlinePlayers()) {
                 player.kickPlayer(MessageCreator.kickCreator("&cBedWas has ended by an admin", "&aThe server will now reboot and you will be able to play in no time!", true));
             }
+            BedWars.getPlugin(BedWars.class).reload();
         }
-        Bukkit.getScheduler().runTaskLater(BedWars.getPlugin(BedWars.class), Bukkit::reload, 10);
     }
 }

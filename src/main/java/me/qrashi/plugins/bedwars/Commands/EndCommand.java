@@ -13,8 +13,12 @@ public class EndCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(BedWars.getGameManager().isSetUp()) {
             if (sender instanceof Player) {
-                Player player = (Player) sender;
-                player.openInventory(EndInventory.getInv());
+                if (sender.isOp()) {
+                    Player player = (Player) sender;
+                    player.openInventory(EndInventory.getInv());
+                } else {
+                    sender.sendMessage(MessageCreator.t("&cWolltest den anderen grad den spielspaß verderben wa?"));
+                }
             } else {
                 sender.sendMessage("vlt iwan mal in der console...");
             }

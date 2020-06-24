@@ -1,6 +1,7 @@
 package me.qrashi.plugins.bedwars.Game;
 
 import me.qrashi.plugins.bedwars.BedWars;
+import me.qrashi.plugins.bedwars.Inventories.EndInventory;
 import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Utils.BarSender;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
@@ -27,8 +28,16 @@ public final class Manager {
                     sender.sendPerms("&cBedWars&7 is waiting for the completion of the game setup.", "&7Please &astart&7 the game using the &cbed &7item in your inventory");
                     gameState = GameState.SETUP;
                 } else {
-                    if(playType == PlayType.LOBBY) {
-                        sender.sendPerms("&7Lobby editing mode is &a&lenabled&7. &aHave fun editing the lobby!", "&7Lobby editing mode is &a&lenabled&7. &cEnd the mode using &4/endgame");
+                    if(playType == PlayType.BUILDING) {
+                        sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &abuild&7...");
+                    }
+                    else if (playType == PlayType.PLAYING) {
+                        sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &aplay&7...");
+                    }
+                    if(setUp) {
+                        if(playType == PlayType.LOBBY) {
+                            sender.sendPerms("&7Lobby editing mode is &a&lenabled&7. &aHave fun editing the lobby!", "&7Lobby editing mode is &a&lenabled&7. &cEnd the mode using &4/endgame");
+                        }
                     }
                 }
             }
@@ -75,5 +84,14 @@ public final class Manager {
 
     public void setSetUp(boolean setUp) {
         this.setUp = setUp;
+    }
+    public void reset() {
+        map = null;
+        gameTime = 0;
+        gameState = GameState.SETUP;
+        playType = PlayType.NONE;
+        locked = false;
+        setUp = false;
+        EndInventory.setConfirmed(false);
     }
 }

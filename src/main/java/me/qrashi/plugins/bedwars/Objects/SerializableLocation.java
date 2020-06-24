@@ -7,9 +7,9 @@ import java.io.Serializable;
 
 public class SerializableLocation implements Serializable {
 
-    private int x;
-    private int y;
-    private int z;
+    private double x;
+    private double y;
+    private double z;
     private int yaw = 0;
     private int pitch = 0;
 
@@ -22,6 +22,19 @@ public class SerializableLocation implements Serializable {
         x = xc;
         y = yc;
         z = zc;
+        yaw = ya;
+        pitch = pi;
+    }
+
+    public SerializableLocation(double v, double v1, double v2) {
+        x = v;
+        y = v1;
+        z = v2;
+    }
+    public SerializableLocation(double v, double v1, double v2, int ya, int pi) {
+        x = v;
+        y = v1;
+        z = v2;
         yaw = ya;
         pitch = pi;
     }
@@ -46,15 +59,15 @@ public class SerializableLocation implements Serializable {
         this.z = z;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public int getZ() {
+    public double getZ() {
         return z;
     }
 

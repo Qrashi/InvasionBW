@@ -6,6 +6,7 @@ import me.qrashi.plugins.bedwars.Inventories.ItemStacks;
 import me.qrashi.plugins.bedwars.Inventories.MainShop;
 import me.qrashi.plugins.bedwars.Inventories.InvOpener;
 import me.qrashi.plugins.bedwars.Inventories.SetupManager;
+import me.qrashi.plugins.bedwars.Locations.Locations;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -36,6 +37,9 @@ public class JoinListener implements Listener {
         if(!SetupManager.getModeLocked()) {
             playerInv.clear();
             player.setGameMode(GameMode.SURVIVAL);
+            player.teleport(Locations.spawn().getLocationYP());
+            player.setHealth(20);
+            player.setFoodLevel(20);
             if (player.isOp()) {
                 playerInv.setItem(4, ItemStacks.getJoinItem());
             }

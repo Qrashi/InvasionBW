@@ -24,7 +24,7 @@ public final class SetupManager {
             }
         } else {
             inv.setItem(19, InventoryHandeler.createStack(Material.REDSTONE_TORCH, "&a&lPlay a game", Collections.singletonList("&7Left click to &astart&7 a game"), "p(play)", (state == PlayType.PLAYING)));
-            inv.setItem(22, InventoryHandeler.createStack(Material.SANDSTONE, "&b&lBuild mode", Arrays.asList("&7Left click to &abuild&7 a map", "&7Click to see the \"build the lobby\" item"), "p(build)", (state == PlayType.BUILDING)));
+            inv.setItem(22, InventoryHandeler.createStack(Material.SMOOTH_SANDSTONE, "&b&lBuild mode", Arrays.asList("&7Left click to &abuild&7 a map", "&7Click to see the \"build the lobby\" item"), "p(build)", (state == PlayType.BUILDING)));
             if (state == PlayType.BUILDING || state == PlayType.LOBBY) {
                 inv.setItem(31, InventoryHandeler.createStack(Material.GRASS_BLOCK, "&c&lEdit the lobby", Arrays.asList("&7Please be &ccareful&7 when using this", "&7mode and be aware of potential", "&cgriefs &7that could occure.", "&c&lThere is no backup!"), "p(lobby)", (state == PlayType.LOBBY)));
             }
@@ -45,5 +45,9 @@ public final class SetupManager {
 
     public static void setModeLocked(boolean modeLocked) {
         SetupManager.modeLocked = modeLocked;
+    }
+
+    public static void reset() {
+        modeLocked = false;
     }
 }

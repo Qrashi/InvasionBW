@@ -7,6 +7,8 @@ import me.qrashi.plugins.bedwars.Game.Manager;
 import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
 import me.qrashi.plugins.bedwars.Inventories.SetupManager;
 import me.qrashi.plugins.bedwars.Listeners.BlockListeners;
+import me.qrashi.plugins.bedwars.Listeners.DamageListener;
+import me.qrashi.plugins.bedwars.Listeners.FoodListener;
 import me.qrashi.plugins.bedwars.Listeners.JoinListener;
 import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Maps.MapManager;
@@ -45,6 +47,7 @@ public final class BedWars extends JavaPlugin {
         mapManager = new MapManager();
         sender = new BarSender();
         gameManager = new Manager();
+
 
         //This will only be used until i will be able to save and load maps form a file.
         getLogger().info("Loading Maps from file...");
@@ -86,6 +89,8 @@ public final class BedWars extends JavaPlugin {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new InventoryHandeler(), this);
         pluginManager.registerEvents(new BlockListeners(), this);
+        pluginManager.registerEvents(new DamageListener(), this);
+        pluginManager.registerEvents(new FoodListener(), this);
     }
 
     public static void setWorld(World world) {
@@ -114,6 +119,11 @@ public final class BedWars extends JavaPlugin {
     }
     public static BedWars getInstance() {
         return instance;
+    }
+
+    public void reload() {
+        gameManager.reset();
+        SetupManager.reset();
     }
 
 }

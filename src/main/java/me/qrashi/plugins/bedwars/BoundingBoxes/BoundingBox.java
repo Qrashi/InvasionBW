@@ -35,12 +35,12 @@ public class BoundingBox implements Serializable {
         }
     }
     public BoundingBox(SerializableLocation loc1, SerializableLocation loc2) {
-        int x1 = loc1.getX();
-        int x2 = loc2.getX();
-        int y1 = loc1.getY();
-        int y2 = loc2.getY();
-        int z1 = loc1.getZ();
-        int z2 = loc2.getZ();
+        int x1 = (int) loc1.getX();
+        int x2 = (int) loc2.getX();
+        int y1 = (int) loc1.getY();
+        int y2 = (int) loc2.getY();
+        int z1 = (int) loc1.getZ();
+        int z2 = (int) loc2.getZ();
         if(x1 < x2) {
             this.x1 = x1;
             this.x2 = x2;
