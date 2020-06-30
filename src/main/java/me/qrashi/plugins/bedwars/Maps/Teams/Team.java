@@ -44,7 +44,6 @@ public class Team implements Serializable {
     }
     public void setSpawn(SerializableLocation newloc) {
         spawnLoc = newloc;
-
     }
 
     public SerializableLocation getSpawn() {return spawnLoc;}

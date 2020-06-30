@@ -63,7 +63,4 @@ public class GameMap implements Serializable {
     public void clear() {
         BedWars.getActions().replace(BedWars.getUtils().getMaterialList(), bbox);
     }
-    public int getMapID() {
-        BedWars.getMapManager().get
-    }
 }

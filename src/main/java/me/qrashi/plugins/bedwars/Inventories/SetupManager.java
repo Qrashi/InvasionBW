@@ -1,11 +1,9 @@
 package me.qrashi.plugins.bedwars.Inventories;
 
 import me.qrashi.plugins.bedwars.BedWars;
-import me.qrashi.plugins.bedwars.Game.GameState;
 import me.qrashi.plugins.bedwars.Game.PlayType;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,7 +12,7 @@ public final class SetupManager {
 
     private static boolean modeLocked = false;
 
-    public static Inventory mainInv() {
+    protected static Inventory mainInv() {
         Inventory inv = InventoryHandeler.createInventory("&c&lBed&7&lWars setup");
         PlayType state = BedWars.getGameManager().getPlayType();
         if(modeLocked) {

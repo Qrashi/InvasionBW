@@ -84,7 +84,6 @@ public final class BedWars extends JavaPlugin {
     private void commandRegistration() {
         Objects.requireNonNull(getCommand("endgame")).setExecutor(new EndCommand());
     }
-
     private void listenerRegistration() {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new InventoryHandeler(), this);
@@ -92,19 +91,15 @@ public final class BedWars extends JavaPlugin {
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new FoodListener(), this);
     }
-
     public static void setWorld(World world) {
         main = world;
     }
-
     public static BarSender getBarSender() {
         return sender;
     }
-
     public static Manager getGameManager() {
         return gameManager;
     }
-
     public static World getWorld() {
         return main;
     }

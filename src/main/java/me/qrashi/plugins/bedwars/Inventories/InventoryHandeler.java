@@ -134,6 +134,26 @@ public class InventoryHandeler implements Listener {
         }
         return stack;
     }
+
+    public static ItemStack createStack(Material material, String name, List<String> lore, boolean enchanted) {
+        ItemStack stack = new ItemStack(material, 1);
+        ItemMeta stack_meta = stack.getItemMeta();
+        assert stack_meta != null;
+        stack_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
+        for(String i: lore){
+            newlore.add(ChatColor.translateAlternateColorCodes('&', i));
+        }
+        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
+        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
+        stack_meta.setLore(newlore);
+        stack.setItemMeta(stack_meta);
+        if(enchanted){
+            stack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        }
+        return stack;
+    }
+
     public static ItemStack createStack(Material material, String name, List<String> lore, String command) {
         ItemStack stack = new ItemStack(material, 1);
         ItemMeta stack_meta = stack.getItemMeta();

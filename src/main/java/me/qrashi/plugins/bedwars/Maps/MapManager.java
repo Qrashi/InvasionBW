@@ -27,7 +27,9 @@ public final class MapManager implements Serializable {
     return false;
     }
     public void createMap(GameMap map) {
-        mapList.add(map);
+        if(!exists(map.getName())) {
+            mapList.add(map);
+        }
     }
 
     public GameMap getMapByName(String name) {
@@ -40,5 +42,14 @@ public final class MapManager implements Serializable {
         }
     return null;}
 
-    ///}
+    public GameMap getMapByInt(int i) {
+        if(i <= mapList.size()) {
+            return mapList.get(i);
+        }
+        return null;
+    }
+    public boolean isIntInList(int i) {
+        return i <= mapList.size();
+    }
+
 }
