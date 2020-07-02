@@ -17,8 +17,8 @@ public final class SetupManager {
         PlayType state = BedWars.getGameManager().getPlayType();
         if(modeLocked) {
             if(state == PlayType.BUILDING) {
-                inv.setItem(21, InventoryHandeler.createStack(Material.NETHER_STAR, "&a&lCreate a new map", Arrays.asList("&7Left click to &acreate a new", "&aspace &7for your map", "", "&cBe aware of griefs, there is &4no backup&c!"), "p(newmap)"));
-                inv.setItem(23, InventoryHandeler.createStack(Material.IRON_AXE, "&a&lEdit an existing map", Arrays.asList("&7Left click to edit an existing map", "", "&cBe aware of griefs, there is &4no backup&c!"), "p(editmap)"));
+                inv.setItem(21, InventoryHandeler.createStack(Material.NETHER_STAR, "&a&lCreate a new map", Arrays.asList("&7Left click to &acreate a new", "&aspace &7for your map", "", "&cBe aware of griefs, there is &4no backup&c!"), "p(newmapb)"));
+                inv.setItem(23, InventoryHandeler.createStack(Material.IRON_AXE, "&a&lEdit an existing map", Arrays.asList("&7Left click to edit an existing map", "", "&cBe aware of griefs, there is &4no backup&c!"), "p(editmapb)"));
             }
         } else {
             inv.setItem(19, InventoryHandeler.createStack(Material.REDSTONE_TORCH, "&a&lPlay a game", Collections.singletonList("&7Left click to &astart&7 a game"), "p(play)", (state == PlayType.PLAYING)));

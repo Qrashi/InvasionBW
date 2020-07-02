@@ -43,13 +43,13 @@ public final class MapManager implements Serializable {
     return null;}
 
     public GameMap getMapByInt(int i) {
-        if(i <= mapList.size()) {
+        if(isIntInList(i)) {
             return mapList.get(i);
         }
         return null;
     }
     public boolean isIntInList(int i) {
-        return i <= mapList.size();
+        return i < mapList.size();
     }
 
 }

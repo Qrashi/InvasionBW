@@ -3,6 +3,10 @@ package me.qrashi.plugins.bedwars.Inventories;
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Game.PlayType;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -85,6 +89,14 @@ public class InventoryHandeler implements Listener {
                         BedWars.getGameManager().finalizePlayType();
                         BedWars.getGameManager().setSetUp(true);
                         break;
+                    case "editmapb":
+                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false));
+                        break;
+                    case "newmapb":
+                        //stub
+                        break;
+
+
                 }
             case 'z':
                 switch (arguments) {
@@ -97,6 +109,13 @@ public class InventoryHandeler implements Listener {
                             EndInventory.endGame();
                         }
                         break;
+                    case "dc":
+                        TextComponent clickme = new TextComponent(ChatColor.translateAlternateColorCodes('&',"&7[&3Network&7] &9Link to our discord server &a[Click me]"));
+                        clickme.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/t7sT9Ka"));
+                        clickme.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                new ComponentBuilder("Click to open the discord invitation").color(net.md_5.bungee.api.ChatColor.BLUE).create()));
+                        player.spigot().sendMessage(clickme);
+                        InvOpener.closeDelay(player);
 
                 }
         }
@@ -334,7 +353,7 @@ public class InventoryHandeler implements Listener {
         }
     }
     @EventHandler
-    public void onInventoryClick(PlayerDropItemEvent event) {
+    public void onDrop(PlayerDropItemEvent event) {
         ItemStack clicked = event.getItemDrop().getItemStack();
         if (clicked.getType() != Material.AIR) {
             if (clicked.hasItemMeta()) {
