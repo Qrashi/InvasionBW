@@ -6,10 +6,7 @@ import me.qrashi.plugins.bedwars.Commands.EndCommand;
 import me.qrashi.plugins.bedwars.Game.Manager;
 import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
 import me.qrashi.plugins.bedwars.Inventories.SetupManager;
-import me.qrashi.plugins.bedwars.Listeners.BlockListeners;
-import me.qrashi.plugins.bedwars.Listeners.DamageListener;
-import me.qrashi.plugins.bedwars.Listeners.FoodListener;
-import me.qrashi.plugins.bedwars.Listeners.JoinListener;
+import me.qrashi.plugins.bedwars.Listeners.*;
 import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Maps.MapManager;
 import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
@@ -90,6 +87,7 @@ public final class BedWars extends JavaPlugin {
         pluginManager.registerEvents(new BlockListeners(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new FoodListener(), this);
+        pluginManager.registerEvents(new DeathListener(), this);
     }
     public static void setWorld(World world) {
         main = world;
