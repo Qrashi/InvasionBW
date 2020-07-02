@@ -21,6 +21,8 @@ public class DeathListener implements Listener {
                         EntityDamageEvent.DamageCause cause = event.getCause();
                     }
                     Bukkit.broadcastMessage(((Player) player).getDisplayName() + " died");
+                    ((Player) player).setHealth(20);
+                    ((Player) player).setFoodLevel(20);
                 }
             }
         }
