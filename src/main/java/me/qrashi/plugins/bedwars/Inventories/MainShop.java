@@ -9,10 +9,7 @@ import java.util.Arrays;
 
 public class MainShop {
     public static Inventory shop() {
-        Inventory inv = Bukkit.createInventory(null, 45, "§6Shop");
-        for(int m = 18; m <45; m++) {
-            inv.setItem(m, InventoryHandeler.getNothing());
-        }
+        Inventory inv = InventoryHandeler.createInventory("§Shop", 45);
         for(int m = 28; m < 35;m++ ) {
             inv.setItem(m ,new ItemStack(Material.AIR));
         }
