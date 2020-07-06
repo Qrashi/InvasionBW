@@ -13,8 +13,8 @@ public class DeathListener implements Listener {
         Entity player = event.getEntity();
         if(player instanceof Player) {
             if(event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-                Double hp = ((Player) player).getHealth();
-                Double damage = event.getDamage();
+                double hp = ((Player) player).getHealth();
+                double damage = event.getDamage();
                 if (damage >= hp) {
                     event.setDamage(0);
                     if(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {

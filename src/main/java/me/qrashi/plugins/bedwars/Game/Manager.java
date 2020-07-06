@@ -47,6 +47,13 @@ public final class Manager {
     public GameMap getMap() {
         return map;
     }
+
+    public void setGameMap(GameMap toSet) {
+        if(toSet != null) {
+            map = toSet;
+        }
+    }
+
     public int getGameTime() {
         return gameTime;
     }

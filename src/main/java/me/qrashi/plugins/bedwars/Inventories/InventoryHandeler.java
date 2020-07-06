@@ -16,6 +16,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -25,8 +26,10 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 public class InventoryHandeler implements Listener {
@@ -64,6 +67,15 @@ public class InventoryHandeler implements Listener {
                         InvOpener.openDelay(player, MainShop.shop());
                         break;
                 }
+            case 'm':
+                if(BedWars.getMapManager().exists(arguments)) {
+                    BedWars.getGameManager().setGameMap(BedWars.getMapManager().getMapByName(arguments));
+                    if(BedWars.getGameManager().getPlayType() == PlayType.BUILDING) {
+                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false));
+                    } else if(BedWars.getGameManager().getPlayType() == PlayType.PLAYING) {
+                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false));
+                    }
+                }
             case 'p':
                 switch (arguments) {
                     case "play":
@@ -93,7 +105,7 @@ public class InventoryHandeler implements Listener {
                         InvOpener.openDelay(player, MapChooser.getMapChooseInv(false));
                         break;
                     case "newmapb":
-                        //stub
+                        SetupManager.createMapStart(player);
                         break;
 
 
@@ -121,6 +133,12 @@ public class InventoryHandeler implements Listener {
         }
     }
 
+    private List<Action> okAct = new ArrayList<>();
+    public InventoryHandeler() {
+        okAct.add(Action.RIGHT_CLICK_AIR);
+        okAct.add(Action.RIGHT_CLICK_BLOCK);
+    }
+
     //static util methods
 
     public static Inventory createInventory(String name, int size) {
@@ -132,6 +150,20 @@ public class InventoryHandeler implements Listener {
         Inventory inv = Bukkit.createInventory(null, 45, MessageCreator.t(name));
         IntStream.range(0, 45).forEachOrdered(n -> inv.setItem(n, getNothing()));
         return inv;
+    }
+
+    public static ItemStack createStack(Material material, List<String> lore) {
+        ItemStack stack = new ItemStack(material, 1);
+        ItemMeta stack_meta = stack.getItemMeta();
+        assert stack_meta != null;
+        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
+        for(String i: lore){
+            newlore.add(ChatColor.translateAlternateColorCodes('&', i));
+        }
+        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
+        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
+        stack_meta.setLore(newlore);
+        return stack;
     }
 
     public static ItemStack createStack(Material material, String name, List<String> lore, String command, boolean enchanted) {
@@ -151,6 +183,33 @@ public class InventoryHandeler implements Listener {
         if(enchanted){
             stack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
         }
+        return stack;
+    }
+
+    public static ItemStack createStack(Material material, String name) {
+        ItemStack stack = new ItemStack(material, 1);
+        ItemMeta stack_meta = stack.getItemMeta();
+        assert stack_meta != null;
+        stack_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
+        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
+        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
+        stack_meta.setLore(newlore);
+        stack.setItemMeta(stack_meta);
+        return stack;
+    }
+
+    public static ItemStack createStack(Material material, String name, String command) {
+        ItemStack stack = new ItemStack(material, 1);
+        ItemMeta stack_meta = stack.getItemMeta();
+        assert stack_meta != null;
+        stack_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
+        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&o" + command));
+        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
+        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
+        stack_meta.setLore(newlore);
+        stack.setItemMeta(stack_meta);
         return stack;
     }
 
@@ -315,33 +374,36 @@ public class InventoryHandeler implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         ItemStack clicked = event.getItem();
-        if (clicked != null) {
-            if (clicked.getType() != Material.AIR) {
-                if (clicked.hasItemMeta()) {
-                    ItemMeta meta = clicked.getItemMeta();
-                    if (meta != null) {
-                        if (meta.hasLore()) {
-                            List<String> lore = meta.getLore();
-                            if (lore != null) {
-                                if (lore.size() > 0) {
+        Action action = event.getAction();
+        if(okAct.contains(action)) {
+            if (clicked != null) {
+                if (clicked.getType() != Material.AIR) {
+                    if (clicked.hasItemMeta()) {
+                        ItemMeta meta = clicked.getItemMeta();
+                        if (meta != null) {
+                            if (meta.hasLore()) {
+                                List<String> lore = meta.getLore();
+                                if (lore != null) {
+                                    if (lore.size() > 0) {
 
-                                    if (ChatColor.stripColor(lore.get(lore.size() - 1)).equals("InvasionBW")) {
-                                        event.setCancelled(true);
-                                    }
-                                    if (lore.size() > 1) {
-                                        String commandraw = ChatColor.stripColor(lore.get(lore.size() - 2));
-                                        HumanEntity player = event.getPlayer();
-                                        Player playerP = Bukkit.getPlayer(player.getName());
-                                        if (playerP != null) {
-                                            playerP.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
+                                        if (ChatColor.stripColor(lore.get(lore.size() - 1)).equals("InvasionBW")) {
+                                            event.setCancelled(true);
                                         }
-                                        if (commandraw.length() > 0) {
-                                            char command = commandraw.charAt(0);
-                                            StringBuilder arg = new StringBuilder();
-                                            IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
-                                            //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
-                                            String args = arg.toString();
-                                            handleClick(command, args, playerP);
+                                        if (lore.size() > 1) {
+                                            String commandraw = ChatColor.stripColor(lore.get(lore.size() - 2));
+                                            HumanEntity player = event.getPlayer();
+                                            Player playerP = Bukkit.getPlayer(player.getName());
+                                            if (playerP != null) {
+                                                playerP.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 2);
+                                            }
+                                            if (commandraw.length() > 0) {
+                                                char command = commandraw.charAt(0);
+                                                StringBuilder arg = new StringBuilder();
+                                                IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
+                                                //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
+                                                String args = arg.toString();
+                                                handleClick(command, args, playerP);
+                                            }
                                         }
                                     }
                                 }

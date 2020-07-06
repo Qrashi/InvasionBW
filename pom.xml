@@ -18,6 +18,8 @@
     </properties>
 
     <build>
+        <outputDirectory>/home/fritz/minecraft-dev/LightBW/plugins</outputDirectory>
+        <directory>/home/fritz/minecraft-dev/LightBW/plugins</directory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -26,6 +28,7 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <outputDirectory>/home/fritz/minecraft-dev/LightBW/plugins</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -67,8 +70,8 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <artifactId>spigot</artifactId>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

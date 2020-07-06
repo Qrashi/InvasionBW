@@ -2,6 +2,7 @@ package me.qrashi.plugins.bedwars;
 
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBox;
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBoxActions;
+import me.qrashi.plugins.bedwars.Commands.CreditsCommand;
 import me.qrashi.plugins.bedwars.Commands.EndCommand;
 import me.qrashi.plugins.bedwars.Game.Manager;
 import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
@@ -80,6 +81,7 @@ public final class BedWars extends JavaPlugin {
 
     private void commandRegistration() {
         Objects.requireNonNull(getCommand("endgame")).setExecutor(new EndCommand());
+        Objects.requireNonNull(getCommand("credits")).setExecutor(new CreditsCommand());
     }
     private void listenerRegistration() {
         PluginManager pluginManager = Bukkit.getPluginManager();
@@ -87,7 +89,7 @@ public final class BedWars extends JavaPlugin {
         pluginManager.registerEvents(new BlockListeners(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new FoodListener(), this);
-        pluginManager.registerEvents(new DeathListener(), this);
+        //pluginManager.registerEvents(new DeathListener(), this);
     }
     public static void setWorld(World world) {
         main = world;

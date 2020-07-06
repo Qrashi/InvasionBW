@@ -10,3 +10,5 @@ commands:
     description: Ends the current game
     aliases: [e, end]
     permissions: BedWars.admin
+  credits:
+    description: Shows the credits.

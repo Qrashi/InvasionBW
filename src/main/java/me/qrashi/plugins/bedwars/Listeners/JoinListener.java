@@ -15,6 +15,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 
+import java.util.Set;
+
 public class JoinListener implements Listener {
 
     private boolean firstJoin = true;
@@ -34,7 +36,7 @@ public class JoinListener implements Listener {
 
         //real listener
         Inventory playerInv = player.getInventory();
-        if(!SetupManager.getModeLocked()) {
+        if(!SetupManager.getModeLocked() && !BedWars.getGameManager().isSetUp()) {
             playerInv.clear();
             player.setGameMode(GameMode.SURVIVAL);
             player.teleport(Locations.spawn().getLocationYP());
