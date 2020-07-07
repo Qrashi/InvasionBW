@@ -12,7 +12,7 @@ import java.util.List;
  * @author Wesley Smith
  * @since 1.2.1
  */
-public class VersionMatcher {
+class VersionMatcher {
 
     /**
      * The server's version
@@ -31,7 +31,7 @@ public class VersionMatcher {
      * @return The {@link VersionWrapper} for this server
      * @throws RuntimeException If AnvilGUI doesn't support this server version
      */
-    public VersionWrapper match() {
+    VersionWrapper match() {
         try {
             return versions.stream()
                     .filter(version -> version.getSimpleName().substring(7).equals(serverVersion))

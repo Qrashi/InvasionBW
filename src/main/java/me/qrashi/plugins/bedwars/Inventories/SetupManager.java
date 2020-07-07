@@ -25,7 +25,7 @@ public final class SetupManager {
                 inv.setItem(23, InventoryHandeler.createStack(Material.IRON_AXE, "&a&lEdit an existing map", Arrays.asList("&7Left click to edit an existing map", "", "&cBe aware of griefs, there is &4no backup&c!"), "p(editmapb)"));
             }
             else if (state == PlayType.PLAYING) {
-                return MapChooser.getMapChooseInv(true);
+                return MapChooser.getMapChooseInv(true, false);
             }
         } else {
             inv.setItem(19, InventoryHandeler.createStack(Material.REDSTONE_TORCH, "&a&lPlay a game", Collections.singletonList("&7Left click to &astart&7 a game"), "p(play)", (state == PlayType.PLAYING)));

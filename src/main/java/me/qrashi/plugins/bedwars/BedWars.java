@@ -20,9 +20,11 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public final class BedWars extends JavaPlugin {
 
@@ -34,33 +36,33 @@ public final class BedWars extends JavaPlugin {
     private FileManager manager;
     private static BarSender sender;
     private static Manager gameManager;
+    private static Logger logger;
 
     @Override
     public void onEnable() {
-        getLogger().info("Loading map data");
+        logger = getLogger();
+        logger.info("Loading map data");
         instance = this;
         actions = new BoundingBoxActions();
         utilClass = new Utils();
         manager = new FileManager();
-        mapManager = new MapManager();
         sender = new BarSender();
         gameManager = new Manager();
 
 
         //This will only be used until i will be able to save and load maps form a file.
-        getLogger().info("Loading Maps from file...");
-        GameMap map = new GameMap("TestMap", 2, 2, new BoundingBox(-61, 62, 24, -69, 67, 15), new SerializableLocation(-61, 62, 24));
-        List<GameMap> toLoad = Collections.singletonList(map);
-        mapManager.load(toLoad);
+        //logger.info("Loading Maps from file...");
+        //GameMap map = new GameMap("TestMap", 2, 2, new BoundingBox(-61, 62, 24, -69, 67, 15), new SerializableLocation(-61, 62, 24));
+        //GameMap map2 = new GameMap("TestMap 2", 4, 2, new BoundingBox(-61, 62, 24, -69, 67, 15), new SerializableLocation(-61, 62, 24));
+        //ArrayList<GameMap> toLoad = new ArrayList<GameMap>();
+        //toLoad.add(map);
+        //mapManager.load(toLoad);
+        //mapManager.createMap(map2);
+        //mapManager.getMapByName("TestMap 2").setAvailable(true);
         //Please put the file loading in fileLoader.class
-        //try {
-        //    mapManager.load((List<GameMap>) manager.loadFromFile("/maps.properties"));
-        //} catch (IOException | ClassNotFoundException e) {
-         //   e.printStackTrace();
-        //}
-
-        getLogger().info("Finishing startup sequence");
-        getLogger().info("Registering listeners");
+        loadMaps();
+        logger.info("Finishing startup sequence");
+        logger.info("Registering listeners");
         getServer().getPluginManager().registerEvents(new JoinListener(), this);
         listenerRegistration();
         commandRegistration();
@@ -69,14 +71,9 @@ public final class BedWars extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getLogger().info("Saving...");
-        //save
-        try {
-            manager.saveToFile(mapManager.save(),"/maps.properties");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        getLogger().info("Saving complete, plugin shut down sequence complete.");
+        logger.info("Started maps saving to file.");
+        saveMaps();
+        logger.info("Saving complete, plugin shut down sequence complete.");
     }
 
     private void commandRegistration() {
@@ -97,6 +94,11 @@ public final class BedWars extends JavaPlugin {
     public static BarSender getBarSender() {
         return sender;
     }
+
+    public static Logger getLogging() {
+        return logger;
+    }
+
     public static Manager getGameManager() {
         return gameManager;
     }
@@ -119,6 +121,39 @@ public final class BedWars extends JavaPlugin {
     public void reload() {
         gameManager.reset();
         SetupManager.reset();
+        logger.info("Saving...");
+        saveMaps();
+        loadMaps();
+    }
+
+    public void saveMaps() {
+        logger.info("Saving...");
+        try {
+            manager.saveMapManager(mapManager, "/maps.properties");
+            logger.info("Saved maps!");
+        } catch (IOException e) {
+            logger.warning("Error while saving maps!");
+            e.printStackTrace();
+        }
+        logger.info("Saving complete!");
+    }
+    public void loadMaps() {
+        logger.info("Loading maps...");
+        try {
+            mapManager = manager.loadMapManager("/maps.properties");
+            logger.info("Successfully loaded maps.");
+        } catch (IOException | ClassNotFoundException e) {
+            logger.warning("Error while loading map data.");
+            e.printStackTrace();
+        }
+        if(mapManager == null) {
+            mapManager = new MapManager();
+            ArrayList<GameMap> toLoad = new ArrayList<>();
+            toLoad.add(new GameMap("&cError while importing maps!", 0, 0, new BoundingBox(-0, 0, 0, 0, 0, 0), new SerializableLocation(0, 0, 0)));
+            mapManager.load(toLoad);
+            logger.warning("Loaded backup maps...");
+        }
+        logger.info("Maps loaded.");
     }
 
 }

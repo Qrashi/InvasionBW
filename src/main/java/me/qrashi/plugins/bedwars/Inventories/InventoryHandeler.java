@@ -71,9 +71,9 @@ public class InventoryHandeler implements Listener {
                 if(BedWars.getMapManager().exists(arguments)) {
                     BedWars.getGameManager().setGameMap(BedWars.getMapManager().getMapByName(arguments));
                     if(BedWars.getGameManager().getPlayType() == PlayType.BUILDING) {
-                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false));
+                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false, true));
                     } else if(BedWars.getGameManager().getPlayType() == PlayType.PLAYING) {
-                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false));
+                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(true, false));
                     }
                 }
             case 'p':
@@ -99,10 +99,10 @@ public class InventoryHandeler implements Listener {
                             InvOpener.closeDelay(player);
                         }
                         BedWars.getGameManager().finalizePlayType();
-                        BedWars.getGameManager().setSetUp(true);
+                        //BedWars.getGameManager().setSetUp(true);
                         break;
                     case "editmapb":
-                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false));
+                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false, true));
                         break;
                     case "newmapb":
                         SetupManager.createMapStart(player);

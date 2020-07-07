@@ -76,6 +76,7 @@ public final class Manager {
                 player.setGameMode(GameMode.CREATIVE);
                 player.sendTitle(MessageCreator.t("&6Editing the lobby"), MessageCreator.t("&aHave fun!"), 10, 150, 20);
                 player.getInventory().clear();
+                setUp = true;
             }
         }
         locked = true;

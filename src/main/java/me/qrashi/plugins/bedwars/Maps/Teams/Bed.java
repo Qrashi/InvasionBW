@@ -30,6 +30,10 @@ public class Bed implements Serializable {
         return destroyed;
     }
 
+    public void setSpawn(SerializableLocation loc) {
+        this.loc = loc;
+    }
+
     public void revive() {
         destroyed = false;
         BedWars.getWorld().getBlockAt(loc.getLocation()).setType(Material.RED_BED);

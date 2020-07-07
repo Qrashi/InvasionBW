@@ -6,10 +6,11 @@ import java.util.List;
 
 public final class MapManager implements Serializable {
 
-    private List<GameMap> mapList;
+    private ArrayList<GameMap> mapList;
 
-    public void load(List<GameMap> gameMaps) {
+    public MapManager load(ArrayList<GameMap> gameMaps) {
         mapList = gameMaps;
+        return this;
     }
     public GameMap getMap(int ID) {
         return mapList.get(ID);

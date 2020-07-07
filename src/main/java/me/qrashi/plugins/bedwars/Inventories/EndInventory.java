@@ -33,7 +33,7 @@ public class EndInventory {
     public static void setConfirmed(boolean newConfirmed) {
         confirmed = newConfirmed;
     }
-    public static void confirm(Player player) {
+    static void confirm(Player player) {
         Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cA game end token was generated."));
         confirmed = true;
         Bukkit.getScheduler().runTaskLater(BedWars.getPlugin(BedWars.class), () -> {
@@ -44,13 +44,19 @@ public class EndInventory {
         }, 200);
     }
 
-    public static void endGame() {
+    static void endGame() {
         Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cThe game ended."));
         if(BedWars.getGameManager().getPlayType() == PlayType.LOBBY) {
             for(Player player : Bukkit.getOnlinePlayers()) {
                 player.kickPlayer(MessageCreator.kickCreator("&cBedWas has ended by an admin", "&aThe server will now reboot and you will be able to play in no time!", true));
             }
             BedWars.getPlugin(BedWars.class).reload();
+        } else if (!BedWars.getGameManager().isSetUp()) {
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                player.kickPlayer(MessageCreator.kickCreator("&cBedWas has ended by an admin", "&aThe server will now reboot and you will be able to play in no time!", true));
+            }
+            BedWars.getInstance().reload();
         }
+        Bukkit.broadcastMessage(String.valueOf(BedWars.getGameManager().isSetUp()));
     }
 }

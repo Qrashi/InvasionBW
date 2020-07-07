@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 public class MapChooser {
 
-    public static Inventory getMapChooseInv(boolean excludeUnfinished) {
+    public static Inventory getMapChooseInv(boolean excludeUnfinished, boolean goBack) {
         Inventory inv = InventoryHandeler.createInventory("&aChoose a map");
         GameMap chosen = BedWars.getGameManager().getMap();
         inv.setItem(0, makeMapItem(chosen, excludeUnfinished, true, false));
@@ -26,7 +26,9 @@ public class MapChooser {
             }
         }
         inv.setItem(44, InventoryHandeler.createStack(Material.BOOK, "&5&lInformation", Arrays.asList("", "&f> &bChoose a map by &aleft clicking &bon it.", "", "&7General information:", "&fQ: &cWhy are there so many barriers that i cant click?", "&fA: &aThis is because you cant play a game on an &c&lUNFINISHED &amap.", "&fA: &aThe autor(s) of this map have marked it as &c\"incomplete\"&a.", "", "&fQ: &cWhat does the gunpowder mean?", "&fA: &aThis map is under construction. You can therefore edit it", "&fA: &c&lbut please ask the author for permission&a to do so.", "", "&7> More information on the authors can be found on &9Discord&7", "&7> &aClick me to get invited."), "z(dc)"));
-        inv.setItem(36, InventoryHandeler.createStack(Material.RED_STAINED_GLASS_PANE, "&cGo back", "o(setup)"));
+        if(goBack) {
+            inv.setItem(36, InventoryHandeler.createStack(Material.RED_STAINED_GLASS_PANE, "&cGo back", "o(setup)"));
+        }
         return inv;
     }
 
@@ -79,7 +81,7 @@ public class MapChooser {
         if(checkEnch) {
             ench = (BedWars.getGameManager().getMap() == map);
         }
-        if(excludeUnfinished && avialible) {
+        if(excludeUnfinished && !avialible) {
             return InventoryHandeler.createStack(Material.BARRIER, name, lore, ench);
         }
         else if (!excludeUnfinished && !avialible) {

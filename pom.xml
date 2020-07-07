@@ -18,8 +18,6 @@
     </properties>
 
     <build>
-        <outputDirectory>/home/fritz/minecraft-dev/LightBW/plugins</outputDirectory>
-        <directory>/home/fritz/minecraft-dev/LightBW/plugins</directory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

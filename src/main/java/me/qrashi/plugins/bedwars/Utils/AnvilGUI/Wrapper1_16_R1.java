@@ -107,7 +107,7 @@ public class Wrapper1_16_R1 implements VersionWrapper {
      */
     private class AnvilContainer extends ContainerAnvil {
 
-        public AnvilContainer(Player player, String guiTitle) {
+        AnvilContainer(Player player, String guiTitle) {
             super(getRealNextContainerId(player), ((CraftPlayer) player).getHandle().inventory,
                     ContainerAccess.at(((CraftWorld) player.getWorld()).getHandle(), new BlockPosition(0, 0, 0)));
             this.checkReachable = false;
@@ -120,7 +120,7 @@ public class Wrapper1_16_R1 implements VersionWrapper {
             this.levelCost.set(0);
         }
 
-        public int getContainerId() {
+        int getContainerId() {
             return windowId;
         }
 
