@@ -19,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class JoinListener implements Listener {
 
@@ -28,11 +29,16 @@ public class JoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         event.setJoinMessage(MessageCreator.t("&7[&2+&7] " + player.getName()));
-        TextComponent clickme = new TextComponent(ChatColor.translateAlternateColorCodes('&',"&7[&3Network&7] &7Please report any issues on GitHub &a[Click me]"));
+        TextComponent clickme = new TextComponent(ChatColor.translateAlternateColorCodes('&',"&7[&cBedWars&7] &7Please report any issues on GitHub &a[Click me]"));
         clickme.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Fritz-CO-KG/InvasionBW/issues/new"));
         clickme.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new ComponentBuilder("Click to open the a new issue on GitHub").color(net.md_5.bungee.api.ChatColor.GREEN).create()));
-        player.spigot().sendMessage(clickme);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.spigot().sendMessage(clickme);
+            }
+        }.runTaskLater(BedWars.getInstance(), 1);
         if (firstJoin) {
             BedWars.setWorld(player.getLocation().getWorld());
             firstJoin = false;
