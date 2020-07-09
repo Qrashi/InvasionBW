@@ -31,6 +31,9 @@ public class TeamManager implements Serializable {
         return teams.size();
     }
     public int getTeamSize() {
+        if(getTeams() == 0) {
+            return 0;
+        }
         return teams.get(0).getTeamSize();
     }
 

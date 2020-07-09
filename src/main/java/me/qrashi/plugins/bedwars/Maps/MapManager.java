@@ -15,8 +15,12 @@ public final class MapManager implements Serializable {
     public GameMap getMap(int ID) {
         return mapList.get(ID);
     }
-    public List<GameMap> save() {
+    public ArrayList<GameMap> cloneList() {
         return new ArrayList<>(mapList);
+    }
+
+    public int size() {
+        return mapList.size();
     }
 
     public boolean exists(String name) {

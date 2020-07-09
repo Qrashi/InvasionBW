@@ -5,17 +5,20 @@ import me.qrashi.plugins.bedwars.Game.PlayType;
 import me.qrashi.plugins.bedwars.Inventories.ItemStacks;
 import me.qrashi.plugins.bedwars.Inventories.MainShop;
 import me.qrashi.plugins.bedwars.Inventories.InvOpener;
-import me.qrashi.plugins.bedwars.Inventories.SetupManager;
+import me.qrashi.plugins.bedwars.Inventories.Setup.SetupManager;
 import me.qrashi.plugins.bedwars.Locations.Locations;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
-
-import java.util.Set;
 
 public class JoinListener implements Listener {
 
@@ -25,13 +28,18 @@ public class JoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         event.setJoinMessage(MessageCreator.t("&7[&2+&7] " + player.getName()));
+        TextComponent clickme = new TextComponent(ChatColor.translateAlternateColorCodes('&',"&7[&3Network&7] &7Please report any issues on GitHub &a[Click me]"));
+        clickme.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Fritz-CO-KG/InvasionBW/issues/new"));
+        clickme.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new ComponentBuilder("Click to open the a new issue on GitHub").color(net.md_5.bungee.api.ChatColor.GREEN).create()));
+        player.spigot().sendMessage(clickme);
         if (firstJoin) {
             BedWars.setWorld(player.getLocation().getWorld());
             firstJoin = false;
         }
 
         //not real
-        BedWars.getMapManager().getMap(0).clear();
+        //BedWars.getMapManager().getMap(0).clear();
         InvOpener.openDelay(event.getPlayer(), MainShop.shop());
 
         //real listener
@@ -45,17 +53,13 @@ public class JoinListener implements Listener {
             if (player.isOp()) {
                 playerInv.setItem(4, ItemStacks.getJoinItem());
             }
-        } else {
-            if(BedWars.getGameManager().getPlayType() == PlayType.LOBBY) {
-                playerInv.clear();
-            }
-            //team item?
         }
 
         //"rejoin" listeners
         if(SetupManager.getModeLocked() && BedWars.getGameManager().getPlayType() == PlayType.LOBBY) {
             player.setGameMode(GameMode.CREATIVE);
             player.sendTitle(MessageCreator.t("&6Editing the lobby"), MessageCreator.t("&aHave fun!"), 10, 150, 20);
+            playerInv.clear();
         }
     }
 }

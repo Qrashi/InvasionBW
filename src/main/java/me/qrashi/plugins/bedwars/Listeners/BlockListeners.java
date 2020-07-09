@@ -2,7 +2,6 @@ package me.qrashi.plugins.bedwars.Listeners;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Game.PlayType;
-import me.qrashi.plugins.bedwars.Inventories.SetupManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;

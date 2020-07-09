@@ -1,9 +1,10 @@
-package me.qrashi.plugins.bedwars.Inventories;
+package me.qrashi.plugins.bedwars.Inventories.Setup;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Game.PlayType;
+import me.qrashi.plugins.bedwars.Inventories.InvOpener;
+import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
 import me.qrashi.plugins.bedwars.Utils.AnvilGUI.AnvilGUI;
-import me.qrashi.plugins.bedwars.Utils.MessageCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public final class SetupManager {
 
     private static boolean modeLocked = false;
 
-    protected static Inventory mainInv() {
+    public static Inventory mainInv(Player player) {
         Inventory inv = InventoryHandeler.createInventory("&c&lBed&7&lWars setup");
         PlayType state = BedWars.getGameManager().getPlayType();
         if (modeLocked) {
@@ -25,7 +26,7 @@ public final class SetupManager {
                 inv.setItem(23, InventoryHandeler.createStack(Material.IRON_AXE, "&a&lEdit an existing map", Arrays.asList("&7Left click to edit an existing map", "", "&cBe aware of griefs, there is &4no backup&c!"), "p(editmapb)"));
             }
             else if (state == PlayType.PLAYING) {
-                return MapChooser.getMapChooseInv(true, false);
+                return MapChooser.getMapChooseInv(true, false, player);
             }
         } else {
             inv.setItem(19, InventoryHandeler.createStack(Material.REDSTONE_TORCH, "&a&lPlay a game", Collections.singletonList("&7Left click to &astart&7 a game"), "p(play)", (state == PlayType.PLAYING)));
@@ -71,7 +72,7 @@ public final class SetupManager {
                     return AnvilGUI.Response.text("Created the map!");
                 })
                 .text("Enter the name of the map")
-                .item(InventoryHandeler.createStack(Material.PAPER, Arrays.asList("", "&7Please enter the name of", "&7the map you want to create", "", "&cClose to abort.")))
+                .item(InventoryHandeler.createStack(Material.PAPER, "&aPlease eenter the name of the map.", Arrays.asList("", "&7Please enter the name of", "&7the map you want to create", "", "&cClose to abort.")))
                 .plugin(BedWars.getInstance())
                 .open(clickedPlayer), 3);
 

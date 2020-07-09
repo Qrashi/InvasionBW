@@ -16,7 +16,7 @@ public final class Manager {
     int gameTime = 0;
     GameState gameState = GameState.SETUP;
     PlayType playType = PlayType.NONE;
-    private boolean locked = false;
+    private boolean PlayTypeLocked = false;
     private boolean setUp = false;
 
     public Manager() {
@@ -24,15 +24,15 @@ public final class Manager {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if(!locked) {
+                if(!PlayTypeLocked) {
                     sender.sendPerms("&cBedWars&7 is waiting for the completion of the game setup.", "&7Please &astart&7 the game using the &cbed &7item in your inventory");
                     gameState = GameState.SETUP;
                 } else {
                     if(playType == PlayType.BUILDING) {
-                        sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &abuild&7...");
+                        sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &a&lbuild&7...");
                     }
                     else if (playType == PlayType.PLAYING) {
-                        sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &aplay&7...");
+                        sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &a&lplay&7...");
                     }
                     if(setUp) {
                         if(playType == PlayType.LOBBY) {
@@ -66,7 +66,7 @@ public final class Manager {
     }
 
     public void setPlayType(PlayType playType) {
-        if(!locked) {
+        if(!PlayTypeLocked) {
             this.playType = playType;
         }
     }
@@ -79,15 +79,18 @@ public final class Manager {
                 setUp = true;
             }
         }
-        locked = true;
+        PlayTypeLocked = true;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.closeInventory();
+        }
     }
 
     public boolean isSetUp() {
         return setUp;
     }
 
-    public boolean isLocked() {
-        return locked;
+    public boolean isPlayTypeLocked() {
+        return PlayTypeLocked;
     }
 
     public void setSetUp(boolean setUp) {
@@ -98,7 +101,7 @@ public final class Manager {
         gameTime = 0;
         gameState = GameState.SETUP;
         playType = PlayType.NONE;
-        locked = false;
+        PlayTypeLocked = false;
         setUp = false;
         EndInventory.setConfirmed(false);
     }

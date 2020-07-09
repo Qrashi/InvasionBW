@@ -2,6 +2,10 @@ package me.qrashi.plugins.bedwars.Inventories;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Game.PlayType;
+import me.qrashi.plugins.bedwars.Inventories.Setup.MapChooser;
+import me.qrashi.plugins.bedwars.Inventories.Setup.SearchManager;
+import me.qrashi.plugins.bedwars.Inventories.Setup.SetupManager;
+import me.qrashi.plugins.bedwars.Players.PlayerData;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -29,7 +33,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 public class InventoryHandeler implements Listener {
@@ -61,39 +64,42 @@ public class InventoryHandeler implements Listener {
             case 'o':
                 switch (arguments) {
                     case "setup":
-                        InvOpener.openDelay(player, SetupManager.mainInv());
+                        InvOpener.openDelay(player, SetupManager.mainInv(player));
                         break;
                     case "shop":
                         InvOpener.openDelay(player, MainShop.shop());
+                        break;
+                    case "close":
+                        InvOpener.closeDelay(player);
                         break;
                 }
             case 'm':
                 if(BedWars.getMapManager().exists(arguments)) {
                     BedWars.getGameManager().setGameMap(BedWars.getMapManager().getMapByName(arguments));
                     if(BedWars.getGameManager().getPlayType() == PlayType.BUILDING) {
-                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false, true));
+                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false, true, player));
                     } else if(BedWars.getGameManager().getPlayType() == PlayType.PLAYING) {
-                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(true, false));
+                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(true, false, player));
                     }
                 }
             case 'p':
                 switch (arguments) {
                     case "play":
                         BedWars.getGameManager().setPlayType(PlayType.PLAYING);
-                        InvOpener.openDelay(player, SetupManager.mainInv());
+                        InvOpener.openDelay(player, SetupManager.mainInv(player));
                         break;
                     case "build":
                         BedWars.getGameManager().setPlayType(PlayType.BUILDING);
-                        InvOpener.openDelay(player, SetupManager.mainInv());
+                        InvOpener.openDelay(player, SetupManager.mainInv(player));
                         break;
                     case "lobby":
                         BedWars.getGameManager().setPlayType(PlayType.LOBBY);
-                        InvOpener.openDelay(player, SetupManager.mainInv());
+                        InvOpener.openDelay(player, SetupManager.mainInv(player));
                         break;
                     case "lockptype":
                         SetupManager.setModeLocked(true);
                         if(BedWars.getGameManager().getPlayType() != PlayType.LOBBY) {
-                            InvOpener.openDelay(player, SetupManager.mainInv());
+                            InvOpener.openDelay(player, SetupManager.mainInv(player));
                         }
                         else {
                             InvOpener.closeDelay(player);
@@ -102,7 +108,7 @@ public class InventoryHandeler implements Listener {
                         //BedWars.getGameManager().setSetUp(true);
                         break;
                     case "editmapb":
-                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false, true));
+                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false, true, player));
                         break;
                     case "newmapb":
                         SetupManager.createMapStart(player);
@@ -112,9 +118,12 @@ public class InventoryHandeler implements Listener {
                 }
             case 'z':
                 switch (arguments) {
+                    case "searchmap":
+                        SearchManager.startSearch(player);
+                        break;
                     case "econf":
                         EndInventory.confirm(player);
-                        InvOpener.openDelay(player, EndInventory.getInv());
+                        InvOpener.closeDelay(player);
                         break;
                     case "eg":
                         if(EndInventory.isConfirmed()) {
@@ -128,12 +137,24 @@ public class InventoryHandeler implements Listener {
                                 new ComponentBuilder("Click to open the discord invitation").color(net.md_5.bungee.api.ChatColor.BLUE).create()));
                         player.spigot().sendMessage(clickme);
                         InvOpener.closeDelay(player);
-
+                        break;
+                    case "p+":
+                        PlayerData playerDataP = BedWars.getPlayerDataManager().getData(player);
+                        playerDataP.setPage(playerDataP.getPage() + 1);
+                        InvOpener.openDelay(player, MapChooser.smartInv(player));
+                        break;
+                    case "p-":
+                        PlayerData playerDataN = BedWars.getPlayerDataManager().getData(player);
+                        if(playerDataN.getPage() != 0) {
+                            playerDataN.setPage(playerDataN.getPage() - 1);
+                            InvOpener.openDelay(player, MapChooser.smartInv(player));
+                        }
+                        break;
                 }
         }
     }
 
-    private List<Action> okAct = new ArrayList<>();
+    private final List<Action> okAct = new ArrayList<>();
     public InventoryHandeler() {
         okAct.add(Action.RIGHT_CLICK_AIR);
         okAct.add(Action.RIGHT_CLICK_BLOCK);
@@ -147,138 +168,59 @@ public class InventoryHandeler implements Listener {
         return inv;
     }
     public static Inventory createInventory(String name) {
-        Inventory inv = Bukkit.createInventory(null, 45, MessageCreator.t(name));
-        IntStream.range(0, 45).forEachOrdered(n -> inv.setItem(n, getNothing()));
-        return inv;
+        return createInventory(name, 45);
     }
 
-    public static ItemStack createStack(Material material, List<String> lore) {
-        ItemStack stack = new ItemStack(material, 1);
-        ItemMeta stack_meta = stack.getItemMeta();
-        assert stack_meta != null;
-        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
-        for(String i: lore){
-            newlore.add(ChatColor.translateAlternateColorCodes('&', i));
-        }
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
-        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
-        stack_meta.setLore(newlore);
-        return stack;
-    }
-
-    public static ItemStack createStack(Material material, String name, List<String> lore, String command, boolean enchanted) {
-        ItemStack stack = new ItemStack(material, 1);
-        ItemMeta stack_meta = stack.getItemMeta();
-        assert stack_meta != null;
-        stack_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
-        for(String i: lore){
-            newlore.add(ChatColor.translateAlternateColorCodes('&', i));
-        }
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&o" + command));
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
-        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
-        stack_meta.setLore(newlore);
-        stack.setItemMeta(stack_meta);
-        if(enchanted){
-            stack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-        }
-        return stack;
-    }
-
-    public static ItemStack createStack(Material material, String name) {
-        ItemStack stack = new ItemStack(material, 1);
-        ItemMeta stack_meta = stack.getItemMeta();
-        assert stack_meta != null;
-        stack_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
-        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
-        stack_meta.setLore(newlore);
-        stack.setItemMeta(stack_meta);
-        return stack;
-    }
-
-    public static ItemStack createStack(Material material, String name, String command) {
-        ItemStack stack = new ItemStack(material, 1);
-        ItemMeta stack_meta = stack.getItemMeta();
-        assert stack_meta != null;
-        stack_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&o" + command));
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
-        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
-        stack_meta.setLore(newlore);
-        stack.setItemMeta(stack_meta);
-        return stack;
-    }
-
-    public static ItemStack createStack(Material material, String name, List<String> lore, boolean enchanted) {
-        ItemStack stack = new ItemStack(material, 1);
-        ItemMeta stack_meta = stack.getItemMeta();
-        assert stack_meta != null;
-        stack_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
-        for(String i: lore){
-            newlore.add(ChatColor.translateAlternateColorCodes('&', i));
-        }
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
-        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
-        stack_meta.setLore(newlore);
-        stack.setItemMeta(stack_meta);
-        if(enchanted){
-            stack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-        }
-        return stack;
-    }
-
-    public static ItemStack createStack(Material material, String name, List<String> lore, String command) {
-        ItemStack stack = new ItemStack(material, 1);
-        ItemMeta stack_meta = stack.getItemMeta();
-        assert stack_meta != null;
-        stack_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
-        for(String i: lore){
-            newlore.add(ChatColor.translateAlternateColorCodes('&', i));
-        }
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&o" + command));
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
-        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
-        stack_meta.setLore(newlore);
-        stack.setItemMeta(stack_meta);
-        return stack;
-    }
-    public static ItemStack createStack(Material material, String name, List<String> lore, String command, int amount) {
+    //Main StackCreator method
+    public static ItemStack createStack(Material material, String name, List<String> lore, String command, boolean enchanted, int amount) {
         ItemStack stack = new ItemStack(material, amount);
         ItemMeta stack_meta = stack.getItemMeta();
         assert stack_meta != null;
         stack_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
         List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
-        for(String i: lore){
-            newlore.add(ChatColor.translateAlternateColorCodes('&', i));
+        if(!lore.isEmpty()) {
+            for (String i : lore) {
+                newlore.add(ChatColor.translateAlternateColorCodes('&', i));
+            }
         }
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&o" + command));
+        if(!command.equals("")) { newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&o" + command)); }
         newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
         stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
         stack_meta.setLore(newlore);
         stack.setItemMeta(stack_meta);
+        if(enchanted){
+            stack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        }
         return stack;
+    }
+
+    //Other StackCreators which access the method above
+    public static ItemStack createStack(Material material, String name, List<String> lore, String command, boolean enchanted) {
+        return createStack(material, name, lore, command, enchanted, 1);
+    }
+
+    public static ItemStack createStack(Material material, String name) {
+        return createStack(material, name, Collections.emptyList(), "", false, 1);
+    }
+
+    public static ItemStack createStack(Material material, String name, String command) {
+        return createStack(material, name, Collections.emptyList(), command, false, 1);
+    }
+
+    public static ItemStack createStack(Material material, String name, List<String> lore, boolean enchanted) {
+        return createStack(material, name, lore, "", enchanted, 1);
+    }
+
+    public static ItemStack createStack(Material material, String name, List<String> lore, String command) {
+        return createStack(material, name, lore, command, false, 1);
+    }
+    public static ItemStack createStack(Material material, String name, List<String> lore, String command, int amount) {
+        return createStack(material, name, lore, command, false, amount);
     }
     public static ItemStack createStack(Material material, String name, List<String> lore) {
-        ItemStack stack = new ItemStack(material, 1);
-        ItemMeta stack_meta = stack.getItemMeta();
-        assert stack_meta != null;
-        stack_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-        List<String> newlore = new java.util.ArrayList<>(Collections.emptyList());
-        for(String i: lore){
-            newlore.add(ChatColor.translateAlternateColorCodes('&', i));
-        }
-        newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
-        stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
-        stack_meta.setLore(newlore);
-        stack.setItemMeta(stack_meta);
-        return stack;
+        return createStack(material, name, lore, "", false, 1);
     }
+
     public static ItemStack getNothing() {
         ItemStack nothing = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta nothing_meta =  nothing.getItemMeta();

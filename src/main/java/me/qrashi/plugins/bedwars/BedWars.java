@@ -4,13 +4,16 @@ import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBox;
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBoxActions;
 import me.qrashi.plugins.bedwars.Commands.CreditsCommand;
 import me.qrashi.plugins.bedwars.Commands.EndCommand;
+import me.qrashi.plugins.bedwars.Commands.LoadCommand;
+import me.qrashi.plugins.bedwars.Commands.SaveCommand;
 import me.qrashi.plugins.bedwars.Game.Manager;
 import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
-import me.qrashi.plugins.bedwars.Inventories.SetupManager;
+import me.qrashi.plugins.bedwars.Inventories.Setup.SetupManager;
 import me.qrashi.plugins.bedwars.Listeners.*;
 import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Maps.MapManager;
 import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
+import me.qrashi.plugins.bedwars.Players.PlayerDataManager;
 import me.qrashi.plugins.bedwars.Utils.BarSender;
 import me.qrashi.plugins.bedwars.Utils.FileManager;
 import me.qrashi.plugins.bedwars.Utils.Utils;
@@ -21,8 +24,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -37,6 +38,7 @@ public final class BedWars extends JavaPlugin {
     private static BarSender sender;
     private static Manager gameManager;
     private static Logger logger;
+    private static PlayerDataManager playerDataManager;
 
     @Override
     public void onEnable() {
@@ -48,6 +50,8 @@ public final class BedWars extends JavaPlugin {
         manager = new FileManager();
         sender = new BarSender();
         gameManager = new Manager();
+        mapManager = new MapManager();
+        playerDataManager = new PlayerDataManager();
 
 
         //This will only be used until i will be able to save and load maps form a file.
@@ -66,7 +70,7 @@ public final class BedWars extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new JoinListener(), this);
         listenerRegistration();
         commandRegistration();
-
+        logger.info("Startup sequence completed");
     }
 
     @Override
@@ -79,6 +83,8 @@ public final class BedWars extends JavaPlugin {
     private void commandRegistration() {
         Objects.requireNonNull(getCommand("endgame")).setExecutor(new EndCommand());
         Objects.requireNonNull(getCommand("credits")).setExecutor(new CreditsCommand());
+        Objects.requireNonNull(getCommand("save")).setExecutor(new SaveCommand());
+        Objects.requireNonNull(getCommand("load")).setExecutor(new LoadCommand());
     }
     private void listenerRegistration() {
         PluginManager pluginManager = Bukkit.getPluginManager();
@@ -86,6 +92,7 @@ public final class BedWars extends JavaPlugin {
         pluginManager.registerEvents(new BlockListeners(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new FoodListener(), this);
+        pluginManager.registerEvents(playerDataManager, this);
         //pluginManager.registerEvents(new DeathListener(), this);
     }
     public static void setWorld(World world) {
@@ -117,11 +124,14 @@ public final class BedWars extends JavaPlugin {
     public static BedWars getInstance() {
         return instance;
     }
+    public static PlayerDataManager getPlayerDataManager() {
+        return playerDataManager;
+    }
 
     public void reload() {
         gameManager.reset();
         SetupManager.reset();
-        logger.info("Saving...");
+        logger.info("Reloading plugin...");
         saveMaps();
         loadMaps();
     }
@@ -129,7 +139,7 @@ public final class BedWars extends JavaPlugin {
     public void saveMaps() {
         logger.info("Saving...");
         try {
-            manager.saveMapManager(mapManager, "/maps.properties");
+            manager.saveMapManager(mapManager, "/maps.json");
             logger.info("Saved maps!");
         } catch (IOException e) {
             logger.warning("Error while saving maps!");
@@ -140,7 +150,7 @@ public final class BedWars extends JavaPlugin {
     public void loadMaps() {
         logger.info("Loading maps...");
         try {
-            mapManager = manager.loadMapManager("/maps.properties");
+            mapManager = manager.loadMapManager("/maps.json");
             logger.info("Successfully loaded maps.");
         } catch (IOException | ClassNotFoundException e) {
             logger.warning("Error while loading map data.");

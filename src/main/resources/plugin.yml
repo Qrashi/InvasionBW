@@ -12,3 +12,7 @@ commands:
     permissions: BedWars.admin
   credits:
     description: Shows the credits.
+  save:
+    description: Saves all map data. Can only be used every 300 ticks.
+  load:
+    description: Loads all map data. Can only be used every 300 ticks. Needs to be confirmed.
