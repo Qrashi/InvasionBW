@@ -214,7 +214,7 @@ public class InventoryHandeler implements Listener {
                         InvOpener.openDelay(player, MapChooser.smartInv(player));
                         break;
                     case "cancelend":
-                        Bukkit.broadcastMessage(MessageCreator.t("&cThe game end token was forced invalid."));
+                        Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cThe game end token was forced invalid."));
                         EndInventory.setConfirmed(false);
                         InvOpener.closeDelay(player);
                         break;
