@@ -1,6 +1,7 @@
 package me.qrashi.plugins.bedwars.Inventories;
 
 import me.qrashi.plugins.bedwars.BedWars;
+import me.qrashi.plugins.bedwars.Commands.EndCommand;
 import me.qrashi.plugins.bedwars.Game.PlayType;
 import me.qrashi.plugins.bedwars.Inventories.Setup.MapChooser;
 import me.qrashi.plugins.bedwars.Inventories.Setup.SearchManager;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -38,119 +40,187 @@ import java.util.stream.IntStream;
 public class InventoryHandeler implements Listener {
 
     //main Inventory handeler
-    private void handleClick(char command, String arguments, Player player) {
-        switch (command) {
-            case 's':
-                switch (arguments) {
-                    case "main":
-                        InvOpener.openDelay(player, MainShop.shop());
-                        break;
-                    case "building":
-                        InvOpener.openDelay(player, SideBranchesShop.build());
-                        break;
-                    case "armor":
-                        InvOpener.openDelay(player, SideBranchesShop.armor());
-                        break;
-                    case "tools":
-                        InvOpener.openDelay(player, SideBranchesShop.tools());
-                        break;
-                    case "weapons":
-                        InvOpener.openDelay(player, SideBranchesShop.weapons());
-                        break;
-                    case "bows":
-                        InvOpener.openDelay(player, SideBranchesShop.bows());
-                        break;
-                }
-            case 'o':
-                switch (arguments) {
-                    case "setup":
-                        InvOpener.openDelay(player, SetupManager.mainInv(player));
-                        break;
-                    case "shop":
-                        InvOpener.openDelay(player, MainShop.shop());
-                        break;
-                    case "close":
-                        InvOpener.closeDelay(player);
-                        break;
-                }
-            case 'm':
-                if(BedWars.getMapManager().exists(arguments)) {
-                    BedWars.getGameManager().setGameMap(BedWars.getMapManager().getMapByName(arguments));
-                    if(BedWars.getGameManager().getPlayType() == PlayType.BUILDING) {
-                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false, true, player));
-                    } else if(BedWars.getGameManager().getPlayType() == PlayType.PLAYING) {
-                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(true, false, player));
+
+    /*
+    Information:
+    Please enter your command definitions here:
+
+    s: Shop
+    o: Open
+    m: Choose a map
+    p: Setup
+    z: Special operations
+    +: Page+ in the mapChooser (for the search)
+    -: Page- in the mapChooser (for the search)
+    r: reserved for RightClick, don't use!
+    */
+
+    private void handleLeftClick(char command, String arguments, Player player, boolean isRightClick) {
+        if (isRightClick) {
+            if (command == 'r') {
+                char commandRightClick = arguments.charAt(0);
+                StringBuilder argRight = new StringBuilder();
+                IntStream.range(2, arguments.length() - 1).forEachOrdered(n -> argRight.append(arguments.charAt(n)));
+                String argsRight = argRight.toString();
+                Bukkit.broadcastMessage("Total: " + arguments + " Command:" + commandRightClick + " args: " + argsRight);
+                handleRightClick(commandRightClick, argsRight, player);
+            }
+        } else {
+            switch (command) {
+                case 's':
+                    switch (arguments) {
+                        case "main":
+                            InvOpener.openDelay(player, MainShop.shop());
+                            break;
+                        case "building":
+                            InvOpener.openDelay(player, SideBranchesShop.build());
+                            break;
+                        case "armor":
+                            InvOpener.openDelay(player, SideBranchesShop.armor());
+                            break;
+                        case "tools":
+                            InvOpener.openDelay(player, SideBranchesShop.tools());
+                            break;
+                        case "weapons":
+                            InvOpener.openDelay(player, SideBranchesShop.weapons());
+                            break;
+                        case "bows":
+                            InvOpener.openDelay(player, SideBranchesShop.bows());
+                            break;
                     }
-                }
-            case 'p':
-                switch (arguments) {
-                    case "play":
-                        BedWars.getGameManager().setPlayType(PlayType.PLAYING);
-                        InvOpener.openDelay(player, SetupManager.mainInv(player));
-                        break;
-                    case "build":
-                        BedWars.getGameManager().setPlayType(PlayType.BUILDING);
-                        InvOpener.openDelay(player, SetupManager.mainInv(player));
-                        break;
-                    case "lobby":
-                        BedWars.getGameManager().setPlayType(PlayType.LOBBY);
-                        InvOpener.openDelay(player, SetupManager.mainInv(player));
-                        break;
-                    case "lockptype":
-                        SetupManager.setModeLocked(true);
-                        if(BedWars.getGameManager().getPlayType() != PlayType.LOBBY) {
+                    break;
+                case 'o':
+                    switch (arguments) {
+                        case "setup":
                             InvOpener.openDelay(player, SetupManager.mainInv(player));
-                        }
-                        else {
+                            break;
+                        case "shop":
+                            InvOpener.openDelay(player, MainShop.shop());
+                            break;
+                        case "close":
                             InvOpener.closeDelay(player);
+                            break;
+                    }
+                    break;
+                case 'm':
+                    if (BedWars.getMapManager().exists(arguments)) {
+                        BedWars.getGameManager().setGameMap(BedWars.getMapManager().getMapByName(arguments));
+                        if (BedWars.getGameManager().getPlayType() == PlayType.BUILDING) {
+                            InvOpener.openDelay(player, MapChooser.getMapChooseInv(false, true, player));
+                        } else if (BedWars.getGameManager().getPlayType() == PlayType.PLAYING) {
+                            InvOpener.openDelay(player, MapChooser.getMapChooseInv(true, false, player));
                         }
-                        BedWars.getGameManager().finalizePlayType();
-                        //BedWars.getGameManager().setSetUp(true);
-                        break;
-                    case "editmapb":
-                        InvOpener.openDelay(player, MapChooser.getMapChooseInv(false, true, player));
-                        break;
-                    case "newmapb":
-                        SetupManager.createMapStart(player);
-                        break;
+                    }
+                    break;
+                case 'p':
+                    switch (arguments) {
+                        case "play":
+                            BedWars.getGameManager().setPlayType(PlayType.PLAYING);
+                            InvOpener.openDelay(player, SetupManager.mainInv(player));
+                            break;
+                        case "build":
+                            BedWars.getGameManager().setPlayType(PlayType.BUILDING);
+                            InvOpener.openDelay(player, SetupManager.mainInv(player));
+                            break;
+                        case "lobby":
+                            BedWars.getGameManager().setPlayType(PlayType.LOBBY);
+                            InvOpener.openDelay(player, SetupManager.mainInv(player));
+                            break;
+                        case "lockptype":
+                            SetupManager.setModeLocked(true);
+                            if (BedWars.getGameManager().getPlayType() != PlayType.LOBBY) {
+                                InvOpener.openDelay(player, SetupManager.mainInv(player));
+                            } else {
+                                InvOpener.closeDelay(player);
+                            }
+                            BedWars.getGameManager().finalizePlayType();
+                            //BedWars.getGameManager().setSetUp(true);
+                            break;
+                        case "editmapb":
+                            InvOpener.openDelay(player, MapChooser.getMapChooseInv(false, true, player));
+                            break;
+                        case "newmapb":
+                            SetupManager.createMapStart(player);
+                            break;
 
 
-                }
+                    }
+                    break;
+                case '+':
+                    PlayerData playerDataP = BedWars.getPlayerDataManager().getData(player);
+                    playerDataP.setPage(playerDataP.getPage() + 1);
+                    if (arguments.equalsIgnoreCase("")) {
+                        InvOpener.openDelay(player, MapChooser.smartInv(player));
+                    } else {
+                        SearchManager.search(player, arguments);
+                    }
+                    break;
+                case '-':
+                    PlayerData playerDataN = BedWars.getPlayerDataManager().getData(player);
+                    if (playerDataN.getPage() != 0) {
+                        playerDataN.setPage(playerDataN.getPage() - 1);
+                        if (arguments.equalsIgnoreCase("")) {
+                            InvOpener.openDelay(player, MapChooser.smartInv(player));
+                        } else {
+                            SearchManager.search(player, arguments);
+                        }
+                    }
+                    break;
+                case 'z':
+                    switch (arguments) {
+                        case "searchmap":
+                            SearchManager.startSearch(player, "ESC> cancel search");
+                            break;
+                        case "searchmap_as":
+                            SearchManager.startSearch(player, "ESC> reset search");
+                            break;
+                        case "econf":
+                            EndInventory.confirm(player);
+                            InvOpener.closeDelay(player);
+                            break;
+                        case "eg":
+                            if (EndInventory.isConfirmed()) {
+                                EndInventory.endGame();
+                            }
+                            break;
+                        case "dc":
+                            TextComponent clickme = new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7[&3Network&7] &9Link to our discord server &a[Click me]"));
+                            clickme.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/t7sT9Ka"));
+                            clickme.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                    new ComponentBuilder("Click to open the discord invitation").color(net.md_5.bungee.api.ChatColor.BLUE).create()));
+                            player.spigot().sendMessage(clickme);
+                            InvOpener.closeDelay(player);
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+
+    /*
+    Information:
+    Please enter your command definitions here:
+
+    z: Special operations
+    s: Spectate map
+
+    */
+
+    private void handleRightClick(char command, String arguments, Player player) {
+        switch (command) {
             case 'z':
                 switch (arguments) {
-                    case "searchmap":
-                        SearchManager.startSearch(player);
-                        break;
-                    case "econf":
-                        EndInventory.confirm(player);
-                        InvOpener.closeDelay(player);
-                        break;
-                    case "eg":
-                        if(EndInventory.isConfirmed()) {
-                            EndInventory.endGame();
-                        }
-                        break;
-                    case "dc":
-                        TextComponent clickme = new TextComponent(ChatColor.translateAlternateColorCodes('&',"&7[&3Network&7] &9Link to our discord server &a[Click me]"));
-                        clickme.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/t7sT9Ka"));
-                        clickme.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                new ComponentBuilder("Click to open the discord invitation").color(net.md_5.bungee.api.ChatColor.BLUE).create()));
-                        player.spigot().sendMessage(clickme);
-                        InvOpener.closeDelay(player);
-                        break;
-                    case "p+":
-                        PlayerData playerDataP = BedWars.getPlayerDataManager().getData(player);
-                        playerDataP.setPage(playerDataP.getPage() + 1);
+                    case "clearsearch":
                         InvOpener.openDelay(player, MapChooser.smartInv(player));
                         break;
-                    case "p-":
-                        PlayerData playerDataN = BedWars.getPlayerDataManager().getData(player);
-                        if(playerDataN.getPage() != 0) {
-                            playerDataN.setPage(playerDataN.getPage() - 1);
-                            InvOpener.openDelay(player, MapChooser.smartInv(player));
-                        }
+                    case "cancelend":
+                        EndInventory.setConfirmed(false);
+                        InvOpener.closeDelay(player);
                         break;
                 }
+                break;
+            case 's':
+                //Spectate map arguments
         }
     }
 
@@ -172,7 +242,7 @@ public class InventoryHandeler implements Listener {
     }
 
     //Main StackCreator method
-    public static ItemStack createStack(Material material, String name, List<String> lore, String command, boolean enchanted, int amount) {
+    public static ItemStack createStack(Material material, String name, List<String> lore, String command, String commandRightClick ,boolean enchanted, int amount) {
         ItemStack stack = new ItemStack(material, amount);
         ItemMeta stack_meta = stack.getItemMeta();
         assert stack_meta != null;
@@ -183,6 +253,7 @@ public class InventoryHandeler implements Listener {
                 newlore.add(ChatColor.translateAlternateColorCodes('&', i));
             }
         }
+        if(!commandRightClick.equals("")) { newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&or(" + commandRightClick + ")")); }
         if(!command.equals("")) { newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&o" + command)); }
         newlore.add(ChatColor.translateAlternateColorCodes('&', "&0&oInvasionBW"));
         stack_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
@@ -195,30 +266,35 @@ public class InventoryHandeler implements Listener {
     }
 
     //Other StackCreators which access the method above
-    public static ItemStack createStack(Material material, String name, List<String> lore, String command, boolean enchanted) {
-        return createStack(material, name, lore, command, enchanted, 1);
+
+    public static ItemStack createStack(Material material, String name, List<String> lore, String command, String rightCommand) {
+        return createStack(material, name, lore, command, rightCommand, false, 1);
     }
 
-    public static ItemStack createStack(Material material, String name) {
-        return createStack(material, name, Collections.emptyList(), "", false, 1);
+    public static ItemStack createStack(Material material, String name, List<String> lore, String command, String rightCommand, boolean enchanted) {
+        return createStack(material, name, lore, command, rightCommand, enchanted, 1);
+    }
+
+    public static ItemStack createStack(Material material, String name, List<String> lore, String command, boolean enchanted) {
+        return createStack(material, name, lore, command, "", enchanted, 1);
     }
 
     public static ItemStack createStack(Material material, String name, String command) {
-        return createStack(material, name, Collections.emptyList(), command, false, 1);
+        return createStack(material, name, Collections.emptyList(), command, "", false, 1);
     }
 
     public static ItemStack createStack(Material material, String name, List<String> lore, boolean enchanted) {
-        return createStack(material, name, lore, "", enchanted, 1);
+        return createStack(material, name, lore, "", "", enchanted, 1);
     }
 
     public static ItemStack createStack(Material material, String name, List<String> lore, String command) {
-        return createStack(material, name, lore, command, false, 1);
+        return createStack(material, name, lore, command, "", false, 1);
     }
     public static ItemStack createStack(Material material, String name, List<String> lore, String command, int amount) {
-        return createStack(material, name, lore, command, false, amount);
+        return createStack(material, name, lore, command, "", false, amount);
     }
     public static ItemStack createStack(Material material, String name, List<String> lore) {
-        return createStack(material, name, lore, "", false, 1);
+        return createStack(material, name, lore, "", "", false, 1);
     }
 
     public static ItemStack getNothing() {
@@ -262,7 +338,20 @@ public class InventoryHandeler implements Listener {
                                             IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                             //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
                                             String args = arg.toString();
-                                            handleClick(command, args, playerP);
+                                            if (event.getAction() != InventoryAction.PICKUP_HALF) {
+                                                handleLeftClick(command, args, playerP, false);
+                                            } else {
+                                                if(lore.size() > 2) {
+                                                    String commandrawRight = ChatColor.stripColor(lore.get(lore.size() - 3));
+                                                    char commandRight = commandrawRight.charAt(0);
+                                                    StringBuilder argRight = new StringBuilder();
+                                                    IntStream.range(2, commandrawRight.length() - 1).forEachOrdered(n -> argRight.append(commandrawRight.charAt(n)));
+                                                    //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
+                                                    String argsRight = argRight.toString();
+                                                    //Bukkit.broadcastMessage("Command: " + commandRight + " Args: " + argsRight);
+                                                    handleLeftClick(commandRight, argsRight, playerP, true);
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -302,7 +391,7 @@ public class InventoryHandeler implements Listener {
                                             IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                             //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
                                             String args = arg.toString();
-                                            handleClick(command, args, playerP);
+                                            handleLeftClick(command, args, playerP, false);
                                             }
                                         }
                                     }
@@ -344,7 +433,7 @@ public class InventoryHandeler implements Listener {
                                                 IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                                 //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
                                                 String args = arg.toString();
-                                                handleClick(command, args, playerP);
+                                                handleLeftClick(command, args, playerP, false);
                                             }
                                         }
                                     }
@@ -384,7 +473,7 @@ public class InventoryHandeler implements Listener {
                                         IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                         //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
                                         String args = arg.toString();
-                                        handleClick(command, args, playerP);
+                                        handleLeftClick(command, args, playerP, false);
                                     }
                                 }
                             }

@@ -34,11 +34,11 @@ public class MapChooser {
     }
 
     public static Inventory getMapChooseInv(boolean excludeUnfinished, boolean goBack, Player player) {
-        Inventory inv = InventoryHandeler.createInventory("&aChoose a map");
+        Inventory inv = InventoryHandeler.createInventory("&2Choose a map");
         GameMap chosen = BedWars.getGameManager().getMap();
         inv.setItem(0, makeMapItem(chosen, excludeUnfinished, true, false));
         inv.setItem(8, makeContinue(excludeUnfinished));
-        inv.setItem(4, InventoryHandeler.createStack(Material.GLASS_PANE, "&7Search maps", Arrays.asList("&7Left click to search for specific maps", "", "&cThis is in BETA!"), "z(searchmap)", true));
+        inv.setItem(4, InventoryHandeler.createStack(Material.GLASS_PANE, "&7Search maps", Arrays.asList("&7Left click to search for specific maps", "&cRIGHT CLICK TO RESET", "&cThis is in BETA!"), "z(searchmap)", true));
         MapManager man = BedWars.getMapManager();
         int page = BedWars.getPlayerDataManager().getData(player).getPage();
         int team = 0;
@@ -52,9 +52,9 @@ public class MapChooser {
         }
         inv.setItem(44, InventoryHandeler.createStack(Material.BOOK, "&5&lInformation", Arrays.asList("", "&f> &bChoose a map by &aleft clicking &bon it.", "", "&7General information:", "&fQ: &cWhy are there so many barriers that i cant click?", "&fA: &aThis is because you cant play a game on an &c&lUNFINISHED &amap.", "&fA: &aThe autor(s) of this map have marked it as &c\"incomplete\"&a.", "", "&fQ: &cWhat does the gunpowder mean?", "&fA: &aThis map is under construction. You can therefore edit it", "&fA: &c&lbut please ask the author for permission&a to do so.", "", "&7> More information on the authors can be found on &9Discord&7", "&7> &aClick me to get invited."), "z(dc)"));
         //Pages
-        inv.setItem(38, InventoryHandeler.createStack(Material.REPEATER, "&7<< &a&lPrevious page &7<<", Collections.singletonList("&7Current page: " + page),"z(p-)"));
+        inv.setItem(38, InventoryHandeler.createStack(Material.REPEATER, "&7<< &a&lPrevious page &7<<", Collections.singletonList("&7Current page: " + page),"-()"));
         inv.setItem(40, InventoryHandeler.createStack(Material.BREWING_STAND, "&5&lStatistics", Arrays.asList("&7Statistics for BW maps", "", "&f> &7Total Maps: &5" + MapStatistics.totalMaps(), "&f> &aFinished &7maps: " + MapStatistics.totalFinishedMaps(), "&f> &7Pages: " + MapStatistics.getTotalPages(), "&f> &7Total teams: " + MapStatistics.totalTeams(), "&f> &7Total player spaces: " + MapStatistics.totalPlayers(), "", "&bPlugin by InvasionDevs")));
-        inv.setItem(42, InventoryHandeler.createStack(Material.COMPARATOR, "&7>> &a&lNext page &7>>", Collections.singletonList("&7Current page: " + page),"z(p+)"));
+        inv.setItem(42, InventoryHandeler.createStack(Material.COMPARATOR, "&7>> &a&lNext page &7>>", Collections.singletonList("&7Current page: " + page),"+()"));
         if(goBack) {
             inv.setItem(36, InventoryHandeler.createStack(Material.RED_STAINED_GLASS_PANE, "&cGo back", "o(setup)"));
         } else {
@@ -69,16 +69,16 @@ public class MapChooser {
             name = "&cNo results found for \"&7" + term + "&c\"!";
         } else {
             if(matches.size() == 1) {
-                name = "&a" + matches.size() + " &7map found for \"" + term + "&7\"";
+                name = "&a" + matches.size() + " map&7 found for \"" + term + "&7\"";
             } else {
-                name = "&a" + matches.size() + " &7maps found for \"" + term + "&7\"";
+                name = "&a" + matches.size() + " maps&7 found for \"" + term + "&7\"";
             }
         }
         Inventory inv = InventoryHandeler.createInventory(name);
         GameMap chosen = BedWars.getGameManager().getMap();
         inv.setItem(0, makeMapItem(chosen, excludeUnfinished, true, false));
         inv.setItem(8, makeContinue(excludeUnfinished));
-        inv.setItem(4, InventoryHandeler.createStack(Material.GLASS_PANE, "&7Search maps", Arrays.asList("&7Left click to search for specific maps", "", "&cThis is in BETA!"), "z(searchmap)", true));
+        inv.setItem(4, InventoryHandeler.createStack(Material.GLASS_PANE, "&f&lSearch maps", Arrays.asList("&7Left click to search for specific maps", "", "&cRIGHT CLICK TO RESET", "&cThis is in BETA!"), "z(searchmap_as)", "z(clearsearch)", true));
         MapManager man = BedWars.getMapManager();
         int page = BedWars.getPlayerDataManager().getData(player).getPage();
         int team = 0;
@@ -92,9 +92,9 @@ public class MapChooser {
         }
         inv.setItem(44, InventoryHandeler.createStack(Material.BOOK, "&5&lInformation", Arrays.asList("", "&f> &bChoose a map by &aleft clicking &bon it.", "", "&7General information:", "&fQ: &cWhy are there so many barriers that i cant click?", "&fA: &aThis is because you cant play a game on an &c&lUNFINISHED &amap.", "&fA: &aThe autor(s) of this map have marked it as &c\"incomplete\"&a.", "", "&fQ: &cWhat does the gunpowder mean?", "&fA: &aThis map is under construction. You can therefore edit it", "&fA: &c&lbut please ask the author for permission&a to do so.", "", "&7> More information on the authors can be found on &9Discord&7", "&7> &aClick me to get invited."), "z(dc)"));
         //Pages
-        inv.setItem(38, InventoryHandeler.createStack(Material.REPEATER, "&7<< &a&lPrevious page &7<<", Collections.singletonList("&7Current page: " + page),"z(p-)"));
+        inv.setItem(38, InventoryHandeler.createStack(Material.REPEATER, "&7<< &a&lPrevious page &7<<", Collections.singletonList("&7Current page: " + page),"-(" + term + ")"));
         inv.setItem(40, InventoryHandeler.createStack(Material.BREWING_STAND, "&5&lStatistics", Arrays.asList("&7Statistics for BW maps", "", "&f> &7Total Maps: &5" + MapStatistics.totalMaps(), "&f> &aFinished &7maps: " + MapStatistics.totalFinishedMaps(), "&f> &7Pages: " + MapStatistics.getTotalPages(), "&f> &7Total teams: " + MapStatistics.totalTeams(), "&f> &7Total player spaces: " + MapStatistics.totalPlayers(), "", "&bPlugin by InvasionDevs")));
-        inv.setItem(42, InventoryHandeler.createStack(Material.COMPARATOR, "&7>> &a&lNext page &7>>", Collections.singletonList("&7Current page: " + page),"z(p+)"));
+        inv.setItem(42, InventoryHandeler.createStack(Material.COMPARATOR, "&7>> &a&lNext page &7>>", Collections.singletonList("&7Current page: " + page),"+(" + term + ")"));
         if(goBack) {
             inv.setItem(36, InventoryHandeler.createStack(Material.RED_STAINED_GLASS_PANE, "&cGo back", "o(setup)"));
         } else {
