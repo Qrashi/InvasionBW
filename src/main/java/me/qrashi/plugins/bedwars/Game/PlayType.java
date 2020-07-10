@@ -5,4 +5,5 @@ public enum PlayType {
     PLAYING,
     NONE,
     LOBBY,
+    SPECTATING_MAP
 }

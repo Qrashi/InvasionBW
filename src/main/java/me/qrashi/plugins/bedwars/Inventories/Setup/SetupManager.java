@@ -71,6 +71,7 @@ public final class SetupManager {
                     }
                     return AnvilGUI.Response.text("Created the map!");
                 })
+                .title("Select a name for your map")
                 .text("Enter the name of the map")
                 .item(InventoryHandeler.createStack(Material.PAPER, "&aPlease eenter the name of the map.", Arrays.asList("", "&7Please enter the name of", "&7the map you want to create", "", "&cClose to abort.")))
                 .plugin(BedWars.getInstance())

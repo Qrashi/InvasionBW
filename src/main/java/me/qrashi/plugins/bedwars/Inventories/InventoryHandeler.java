@@ -3,9 +3,7 @@ package me.qrashi.plugins.bedwars.Inventories;
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Commands.EndCommand;
 import me.qrashi.plugins.bedwars.Game.PlayType;
-import me.qrashi.plugins.bedwars.Inventories.Setup.MapChooser;
-import me.qrashi.plugins.bedwars.Inventories.Setup.SearchManager;
-import me.qrashi.plugins.bedwars.Inventories.Setup.SetupManager;
+import me.qrashi.plugins.bedwars.Inventories.Setup.*;
 import me.qrashi.plugins.bedwars.Players.PlayerData;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -221,7 +219,9 @@ public class InventoryHandeler implements Listener {
                 }
                 break;
             case 's':
-                //Spectate map arguments
+                if(BedWars.getMapManager().exists(arguments) && BedWars.getGameManager().getPlayType() != PlayType.LOBBY && BedWars.getGameManager().getPlayType() != PlayType.SPECTATING_MAP) {
+                    MapSpectateManager.spectate(BedWars.getMapManager().getMapByName(arguments));
+                }
         }
     }
 

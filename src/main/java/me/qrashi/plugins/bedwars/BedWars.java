@@ -2,11 +2,9 @@ package me.qrashi.plugins.bedwars;
 
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBox;
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBoxActions;
-import me.qrashi.plugins.bedwars.Commands.CreditsCommand;
-import me.qrashi.plugins.bedwars.Commands.EndCommand;
-import me.qrashi.plugins.bedwars.Commands.LoadCommand;
-import me.qrashi.plugins.bedwars.Commands.SaveCommand;
+import me.qrashi.plugins.bedwars.Commands.*;
 import me.qrashi.plugins.bedwars.Game.Manager;
+import me.qrashi.plugins.bedwars.Game.WorldBorderManager;
 import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
 import me.qrashi.plugins.bedwars.Inventories.Setup.SetupManager;
 import me.qrashi.plugins.bedwars.Listeners.*;
@@ -19,6 +17,7 @@ import me.qrashi.plugins.bedwars.Utils.FileManager;
 import me.qrashi.plugins.bedwars.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -71,6 +70,9 @@ public final class BedWars extends JavaPlugin {
         listenerRegistration();
         commandRegistration();
         logger.info("Startup sequence completed");
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            setWorld(player.getLocation().getWorld());
+        }
     }
 
     @Override
@@ -85,6 +87,7 @@ public final class BedWars extends JavaPlugin {
         Objects.requireNonNull(getCommand("credits")).setExecutor(new CreditsCommand());
         Objects.requireNonNull(getCommand("save")).setExecutor(new SaveCommand());
         Objects.requireNonNull(getCommand("load")).setExecutor(new LoadCommand());
+        Objects.requireNonNull(getCommand("leave")).setExecutor(new LeaveCommand());
     }
     private void listenerRegistration() {
         PluginManager pluginManager = Bukkit.getPluginManager();

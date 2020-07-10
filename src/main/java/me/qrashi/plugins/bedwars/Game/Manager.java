@@ -2,6 +2,7 @@ package me.qrashi.plugins.bedwars.Game;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Inventories.EndInventory;
+import me.qrashi.plugins.bedwars.Inventories.Setup.MapSpectateManager;
 import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Utils.BarSender;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
@@ -33,6 +34,9 @@ public final class Manager {
                     }
                     else if (playType == PlayType.PLAYING) {
                         sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &a&lplay&7...");
+                    }
+                    else if (playType == PlayType.SPECTATING_MAP) {
+                        sender.sendPerms("&7You are spectating map \"" + MapSpectateManager.getCurrentSpectate().getSpectatingMap().getName() + "\"", "&7Stop spectating this map using &c/leave");
                     }
                     if(setUp) {
                         if(playType == PlayType.LOBBY) {
@@ -66,9 +70,7 @@ public final class Manager {
     }
 
     public void setPlayType(PlayType playType) {
-        if(!PlayTypeLocked) {
-            this.playType = playType;
-        }
+        this.playType = playType;
     }
     public void finalizePlayType() {
         if(playType == PlayType.LOBBY) {

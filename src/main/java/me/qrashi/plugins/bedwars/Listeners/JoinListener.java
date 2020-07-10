@@ -2,6 +2,7 @@ package me.qrashi.plugins.bedwars.Listeners;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Game.PlayType;
+import me.qrashi.plugins.bedwars.Game.WorldBorderManager;
 import me.qrashi.plugins.bedwars.Inventories.ItemStacks;
 import me.qrashi.plugins.bedwars.Inventories.MainShop;
 import me.qrashi.plugins.bedwars.Inventories.InvOpener;
@@ -60,7 +61,7 @@ public class JoinListener implements Listener {
                 playerInv.setItem(4, ItemStacks.getJoinItem());
             }
         }
-
+        WorldBorderManager.forceUpdate();
         //"rejoin" listeners
         if(SetupManager.getModeLocked() && BedWars.getGameManager().getPlayType() == PlayType.LOBBY) {
             player.setGameMode(GameMode.CREATIVE);

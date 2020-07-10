@@ -2,6 +2,7 @@ package me.qrashi.plugins.bedwars.Inventories.Setup;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Game.PlayType;
+import me.qrashi.plugins.bedwars.Game.WorldBorderManager;
 import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
 import me.qrashi.plugins.bedwars.Maps.GameMap;
 import me.qrashi.plugins.bedwars.Maps.MapManager;
@@ -125,6 +126,7 @@ public class MapChooser {
         if(map == null) {
             lore.add("&bNo information found for &7\"&c" + name + "&7\"&c");
         } else {
+
             nameraw = map.getName();
             if(isChoosen) {
                 name = "&a&lSelected: " + nameraw;
@@ -141,8 +143,10 @@ public class MapChooser {
             lore.add("&f> &7Team size: &a" + map.getTeamManager().getTeamSize());
             lore.add("&f> &7Max players: &6" + ((map.getTeamManager().getTeams()) * (map.getTeamManager().getTeamSize())));
             lore.add("");
+            lore.add("&fNEW: &aRight click to &lspectate!");
             lore.add("&aLeft click to choose");
         }
+        String commandRightClick = "s(" + nameraw + ")";
         boolean avialible = false;
         if(map != null) {
             avialible = map.getAvailable();
@@ -152,27 +156,28 @@ public class MapChooser {
         }
         boolean ench = false;
         if(checkEnch) {
+            WorldBorderManager.forceUpdate();
             ench = (BedWars.getGameManager().getMap() == map);
         }
         if(excludeUnfinished && !avialible) {
-            return InventoryHandeler.createStack(Material.BARRIER, "&cUnavailable: " + name, lore, ench);
+            return InventoryHandeler.createStack(Material.BARRIER, "&cUnavailable: " + name, lore, "", commandRightClick, ench);
         }
         else if (!excludeUnfinished && !avialible) {
             if(name.equalsIgnoreCase("&cNo map choosen")) {
-                return InventoryHandeler.createStack(Material.GUNPOWDER, name, lore, ench);
+                return InventoryHandeler.createStack(Material.GUNPOWDER, name, lore, "", commandRightClick, ench);
             }
             if(isChoosen) {
-                return InventoryHandeler.createStack(Material.END_CRYSTAL, name, lore, ench);
+                return InventoryHandeler.createStack(Material.END_CRYSTAL, name, lore, "", commandRightClick, ench);
             }
-            return InventoryHandeler.createStack(Material.GUNPOWDER, "&5Experimental: " + name, lore, "m(" + nameraw + ")", ench);
+            return InventoryHandeler.createStack(Material.GUNPOWDER, "&5Experimental: " + name, lore, "m(" + nameraw + ")", commandRightClick, ench);
         } else { //map is avialible and unfinished are off or on
             if(name.equalsIgnoreCase("&cNo map choosen")) {
-                return InventoryHandeler.createStack(Material.SMOOTH_SANDSTONE, name, lore, ench);
+                return InventoryHandeler.createStack(Material.SMOOTH_SANDSTONE, name, lore, "", commandRightClick, ench);
             }
             if(isChoosen) {
-                return InventoryHandeler.createStack(Material.END_CRYSTAL, name, lore, ench);
+                return InventoryHandeler.createStack(Material.END_CRYSTAL, name, lore, "", commandRightClick, ench);
             }
-            return InventoryHandeler.createStack(Material.SMOOTH_SANDSTONE, "&aAvailable: " + name, lore, "m(" + nameraw + ")", ench);
+            return InventoryHandeler.createStack(Material.SMOOTH_SANDSTONE, "&aAvailable: " + name, lore, "m(" + nameraw + ")", commandRightClick, ench);
             }
         }
 

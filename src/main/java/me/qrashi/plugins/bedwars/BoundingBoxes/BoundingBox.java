@@ -1,6 +1,7 @@
 package me.qrashi.plugins.bedwars.BoundingBoxes;
 
 import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
+import org.bukkit.Bukkit;
 
 import java.io.Serializable;
 
@@ -35,6 +36,10 @@ public class BoundingBox implements Serializable {
         }
     }
     public BoundingBox(SerializableLocation loc1, SerializableLocation loc2) {
+
+        /*
+        ~1 is always bigger than ~2
+        */
         int x1 = (int) loc1.getX();
         int x2 = (int) loc2.getX();
         int y1 = (int) loc1.getY();
@@ -81,6 +86,12 @@ public class BoundingBox implements Serializable {
     }
     public int getZ2() {
         return this.z2;
+    }
+    public SerializableLocation getMiddle() {
+        return new SerializableLocation(((x1 - x2) / 2) + x2, 0, ((z1 - z2) / 2) + z2);
+    }
+    public int getMaxRadiusFromMiddle() {
+        return Math.abs(Math.max((x1 - x2), (z1 - z2)));
     }
 
 }
