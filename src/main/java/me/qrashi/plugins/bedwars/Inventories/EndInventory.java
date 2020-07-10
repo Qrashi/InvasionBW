@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 
@@ -18,7 +19,7 @@ public class EndInventory {
         Inventory inv = InventoryHandeler.createInventory("&cEnd the game");
         if(confirmed) {
             inv.setItem(21, InventoryHandeler.createStack(Material.LIME_STAINED_GLASS_PANE, "&aAlready confirmed", Arrays.asList("&7The confirmation will expire in", "&c10&7 seconds.")));
-            inv.setItem(23, InventoryHandeler.createStack(Material.BARRIER, "&4End this game", Arrays.asList("", "&cYou can't undo this"), "z(eg)"));
+            inv.setItem(23, InventoryHandeler.createStack(Material.BARRIER, "&4End this game", Arrays.asList("", "&cYou can't undo this"), "z(eg)", "z(cancelend)"));
         } else {
             inv.setItem(21, InventoryHandeler.createStack(Material.LEVER, "&4Confirm to end", Arrays.asList("&7The confirmation will expire in", "&c10&7 seconds.", "&cLeft click to confirm"), "z(econf)", true));
             inv.setItem(23, InventoryHandeler.createStack(Material.RED_STAINED_GLASS_PANE, "&cPlease confirm using the lever", Arrays.asList("", "&f< &4Confirm using the lever")));
@@ -36,12 +37,17 @@ public class EndInventory {
     static void confirm(Player player) {
         Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cA game end token was generated."));
         confirmed = true;
-        Bukkit.getScheduler().runTaskLater(BedWars.getPlugin(BedWars.class), () -> {
-            EndInventory.setConfirmed(false);
-            if(BedWars.getGameManager().isSetUp()) {
-                Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cThe game token expired."));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(confirmed = true) {
+                    EndInventory.setConfirmed(false);
+                    if (!BedWars.getGameManager().isPlayTypeLocked()) {
+                        Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cThe game token expired."));
+                    }
+                }
             }
-        }, 200);
+        }.runTaskLater(BedWars.getInstance(), 200);
     }
 
     static void endGame() {

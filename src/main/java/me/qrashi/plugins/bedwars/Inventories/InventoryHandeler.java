@@ -62,7 +62,7 @@ public class InventoryHandeler implements Listener {
                 StringBuilder argRight = new StringBuilder();
                 IntStream.range(2, arguments.length() - 1).forEachOrdered(n -> argRight.append(arguments.charAt(n)));
                 String argsRight = argRight.toString();
-                Bukkit.broadcastMessage("Total: " + arguments + " Command:" + commandRightClick + " args: " + argsRight);
+                //Bukkit.broadcastMessage("Total: " + arguments + " Command:" + commandRightClick + " args: " + argsRight);
                 handleRightClick(commandRightClick, argsRight, player);
             }
         } else {
@@ -214,6 +214,7 @@ public class InventoryHandeler implements Listener {
                         InvOpener.openDelay(player, MapChooser.smartInv(player));
                         break;
                     case "cancelend":
+                        Bukkit.broadcastMessage(MessageCreator.t("&cThe game end token was forced invalid."));
                         EndInventory.setConfirmed(false);
                         InvOpener.closeDelay(player);
                         break;
