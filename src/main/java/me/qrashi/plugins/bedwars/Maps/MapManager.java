@@ -1,5 +1,9 @@
 package me.qrashi.plugins.bedwars.Maps;
 
+import me.qrashi.plugins.bedwars.BedWars;
+import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBox;
+import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +59,17 @@ public final class MapManager implements Serializable {
     }
     public boolean isIntInList(int i) {
         return i < mapList.size();
+    }
+
+    public void makeNewMap(String name) {
+        /*
+        Every map has got 1000 blocks of x space and 1000 blocks in y direction.
+         */
+        int nextMap = mapList.size() + 1;
+        SerializableLocation startLoc = new SerializableLocation(nextMap * 1000, 100, 0);
+        BoundingBox boundingBox = new BoundingBox(startLoc, 500, 200);
+        //BedWars
+        //new GameMap(name, 2, 2, boundingBox, startLoc);
     }
 
 }

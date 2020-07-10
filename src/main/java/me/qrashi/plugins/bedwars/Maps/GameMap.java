@@ -2,6 +2,7 @@ package me.qrashi.plugins.bedwars.Maps;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBox;
+import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBoxActions;
 import me.qrashi.plugins.bedwars.Maps.Teams.Team;
 import me.qrashi.plugins.bedwars.Maps.Teams.TeamManager;
 import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
@@ -61,6 +62,6 @@ public class GameMap implements Serializable {
         return locs;
     }
     public void clear() {
-        BedWars.getActions().replace(BedWars.getUtils().getMaterialList(), bbox);
+        BoundingBoxActions.replace(BedWars.getUtils().getMaterialList(), bbox);
     }
 }

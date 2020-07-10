@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 public final class BedWars extends JavaPlugin {
 
     private static World main;
-    private static BoundingBoxActions actions;
     private static Utils utilClass;
     private static MapManager mapManager;
     private static BedWars instance;
@@ -44,7 +43,6 @@ public final class BedWars extends JavaPlugin {
         logger = getLogger();
         logger.info("Loading map data");
         instance = this;
-        actions = new BoundingBoxActions();
         utilClass = new Utils();
         manager = new FileManager();
         sender = new BarSender();
@@ -114,9 +112,6 @@ public final class BedWars extends JavaPlugin {
     }
     public static World getWorld() {
         return main;
-    }
-    public static BoundingBoxActions getActions()  {
-        return actions;
     }
     public static Utils getUtils() {
         return utilClass;

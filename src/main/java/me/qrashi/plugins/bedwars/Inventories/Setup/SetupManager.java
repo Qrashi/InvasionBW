@@ -5,10 +5,12 @@ import me.qrashi.plugins.bedwars.Game.PlayType;
 import me.qrashi.plugins.bedwars.Inventories.InvOpener;
 import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
 import me.qrashi.plugins.bedwars.Utils.AnvilGUI.AnvilGUI;
+import me.qrashi.plugins.bedwars.Utils.MessageCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,25 +59,51 @@ public final class SetupManager {
         modeLocked = false;
     }
 
-    private static void createMap(String name) {
-        Bukkit.broadcastMessage("Created map " + name);
+    private static void createMap(String name, Player player) {
+        if(BedWars.getMapManager().exists(name)) {
+            player.sendMessage(MessageCreator.t("&7[&cBedWars&7] That map already exists! Try another one"));
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    new AnvilGUI.Builder()
+                            .onComplete((player, text) -> {
+                                if (player.getUniqueId().equals(player.getUniqueId())) {
+                                    createMap(text, player);
+                                    InvOpener.closeDelay(player);
+                                }
+                                return AnvilGUI.Response.text("Checking map...");
+                            })
+                            .title("Enter your maps name")
+                            .text(MessageCreator.t("&cName already in use"))
+                            .plugin(BedWars.getInstance())
+                            .open(player);
+                }
+            }.runTaskLater(BedWars.getInstance(), 2);
+        } else {
+            player.sendMessage(MessageCreator.t("&7[&cBedWars&7] Map name is valid. Please wait..."));
+            BedWars.getMapManager().makeNewMap(name);
+        }
 
     }
 
     public static void createMapStart(Player clickedPlayer) {
-        Bukkit.getScheduler().runTaskLater(BedWars.getInstance(), () -> new AnvilGUI.Builder()
-                .onComplete((player, text) -> {
-                    if (player.getUniqueId().equals(clickedPlayer.getUniqueId())) {
-                        createMap(text);
-                        InvOpener.closeDelay(player);
-                    }
-                    return AnvilGUI.Response.text("Created the map!");
-                })
-                .title("Select a name for your map")
-                .text("Enter the name of the map")
-                .item(InventoryHandeler.createStack(Material.PAPER, "&aPlease eenter the name of the map.", Arrays.asList("", "&7Please enter the name of", "&7the map you want to create", "", "&cClose to abort.")))
-                .plugin(BedWars.getInstance())
-                .open(clickedPlayer), 3);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                new AnvilGUI.Builder()
+                        .onComplete((player, text) -> {
+                            if (player.getUniqueId().equals(clickedPlayer.getUniqueId())) {
+                                createMap(text, player);
+                                InvOpener.closeDelay(player);
+                            }
+                            return AnvilGUI.Response.text("Checking map...");
+                        })
+                        .title("Enter your maps name")
+                        .text("Name your map")
+                        .plugin(BedWars.getInstance())
+                        .open(clickedPlayer);
+            }
+        }.runTaskLater(BedWars.getInstance(), 1);
 
     }
 }

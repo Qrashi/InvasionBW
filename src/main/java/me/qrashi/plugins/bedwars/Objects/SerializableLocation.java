@@ -78,6 +78,14 @@ public class SerializableLocation implements Serializable {
     public void setX(int x) {
         this.x = x;
     }
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+    public void setZ(double z) { this.z = z; }
     public Location getLocationYP() {
         return new Location(BedWars.getWorld(), x, y, z, yaw, pitch);
     }
