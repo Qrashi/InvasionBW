@@ -42,6 +42,7 @@ public class EndInventory {
             public void run() {
                 if(confirmed = true) {
                     EndInventory.setConfirmed(false);
+                    player.closeInventory();
                     if (!BedWars.getGameManager().isPlayTypeLocked()) {
                         Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cThe game token expired."));
                     }
@@ -50,19 +51,31 @@ public class EndInventory {
         }.runTaskLater(BedWars.getInstance(), 200);
     }
 
-    static void endGame() {
+    public static void endGame(boolean error, String error_message) {
         Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cThe game ended."));
-        if(BedWars.getGameManager().getPlayType() == PlayType.LOBBY) {
-            for(Player player : Bukkit.getOnlinePlayers()) {
-                player.kickPlayer(MessageCreator.kickCreator("&cBedWas has ended by an admin", "&aThe server will now reboot and you will be able to play in no time!", true));
+        if (error) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.kickPlayer(MessageCreator.kickCreator("&4BedWas has encountered an issue", "&cERROR_CODE: " + error_message + " &4Please report at https://github.com/Fritz-CO-KG/InvasionBW/issues/new!", true));
             }
             BedWars.getPlugin(BedWars.class).reload();
-        } else if (!BedWars.getGameManager().isSetUp()) {
-            for(Player player : Bukkit.getOnlinePlayers()) {
-                player.kickPlayer(MessageCreator.kickCreator("&cBedWas has ended by an admin", "&aThe server will now reboot and you will be able to play in no time!", true));
+        } else {
+            if (BedWars.getGameManager().getPlayType() == PlayType.LOBBY) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    player.kickPlayer(MessageCreator.kickCreator("&cBedWas has ended by an admin", "&aThe server will now reset (not reboot) and you will be able to play in no time!", false));
+                }
+                BedWars.getPlugin(BedWars.class).reload();
+            } else if (!BedWars.getGameManager().isSetUp()) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    player.kickPlayer(MessageCreator.kickCreator("&cBedWas has ended by an admin", "&aThe server will now reset (not reboot) and you will be able to play in no time!", false));
+                }
+                BedWars.getInstance().reload();
             }
-            BedWars.getInstance().reload();
+            if (BedWars.getGameManager().isSetUp()) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    player.kickPlayer(MessageCreator.kickCreator("&cBedWas has ended by an admin", "&aThe server will now reset (not reboot) and you will be able to play in no time!", false));
+                }
+                BedWars.getInstance().reload();
+            }
         }
-        Bukkit.broadcastMessage(String.valueOf(BedWars.getGameManager().isSetUp()));
     }
 }

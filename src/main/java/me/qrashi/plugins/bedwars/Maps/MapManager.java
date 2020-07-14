@@ -2,7 +2,15 @@ package me.qrashi.plugins.bedwars.Maps;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBox;
+import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBoxActions;
+import me.qrashi.plugins.bedwars.Game.PlayType;
+import me.qrashi.plugins.bedwars.Inventories.Setup.MapSpectateManager;
 import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
+import me.qrashi.plugins.bedwars.Utils.MessageCreator;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -61,15 +69,41 @@ public final class MapManager implements Serializable {
         return i < mapList.size();
     }
 
-    public void makeNewMap(String name) {
+    public boolean makeNewMap(String name) {
         /*
         Every map has got 1000 blocks of x space and 1000 blocks in y direction.
          */
+
         int nextMap = mapList.size() + 1;
+        Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] Executing task &aCREATE_MAP&7, this may take some time."));
         SerializableLocation startLoc = new SerializableLocation(nextMap * 1000, 100, 0);
-        BoundingBox boundingBox = new BoundingBox(startLoc, 500, 200);
-        //BedWars
-        //new GameMap(name, 2, 2, boundingBox, startLoc);
+        SerializableLocation copyLoc = startLoc.getCopy();
+        copyLoc.setY(copyLoc.getY() + 1);
+        Location toTp = copyLoc.getTpLocation();
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            player.setAllowFlight(true);
+            player.setFlying(true);
+            player.teleport(toTp);
+        }
+        BoundingBox boundingBox = new BoundingBox(startLoc, 450, 200);
+        int notAir = BoundingBoxActions.checkEmpty(boundingBox);
+        if(notAir > 0) {
+            if(notAir > 100) {
+                Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cError: Found " + notAir + " not air blocks in new maps location, aborting...\n&7[&cBedWars&7] Please contact an admin."));
+                Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &aIf you want to solve this issue, search for not air blocks in this region and maybe destroy them."));
+                BedWars.getGameManager().setSetUp(true);
+                MapSpectateManager.spectate(new GameMap("ERROR_MAP", 1, 1, boundingBox, startLoc), true);
+                return false;
+            }
+            Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cError: Found " + notAir + " not air blocks in new maps location."));
+        }
+        startLoc.getLocation().getBlock().setType(Material.DIAMOND_BLOCK);
+        GameMap newMap = new GameMap(name, 2, 2, boundingBox, startLoc);
+        createMap(newMap);
+        Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] Task &aCREATE_MAP&7 finished, saving..."));
+        BedWars.getInstance().saveMaps();
+        BedWars.getGameManager().setGameMap(newMap);
+        return true;
     }
 
 }

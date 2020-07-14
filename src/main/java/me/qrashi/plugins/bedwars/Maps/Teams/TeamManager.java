@@ -1,13 +1,17 @@
 package me.qrashi.plugins.bedwars.Maps.Teams;
 
+import me.qrashi.plugins.bedwars.BedWars;
+import me.qrashi.plugins.bedwars.Utils.Utils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class TeamManager implements Serializable {
 
-    private final List<Team> teams;
+    private List<Team> teams;
 
     public TeamManager(List<Team> teamList) {
         teams = teamList;
@@ -35,6 +39,17 @@ public class TeamManager implements Serializable {
             return 0;
         }
         return teams.get(0).getTeamSize();
+    }
+    public void setTeams(int teamNum) {
+        List<Team> newteam = new ArrayList<>();
+        if(teamNum > 4) {teamNum = 4;}
+        IntStream.range(0, teamNum).forEachOrdered(n -> newteam.add(new Team(Utils.numToCol(n), getTeamSize())));
+        teams = newteam;
+    }
+    public void setTeamSize(int teamSize) {
+        for(Team team : teams) {
+            team.setTeamSize(teamSize);
+        }
     }
 
 

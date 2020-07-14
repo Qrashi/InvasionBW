@@ -1,6 +1,9 @@
 package me.qrashi.plugins.bedwars.Inventories;
 
 import me.qrashi.plugins.bedwars.BedWars;
+import me.qrashi.plugins.bedwars.BuildMode.BuildInv;
+import me.qrashi.plugins.bedwars.BuildMode.BuildMode;
+import me.qrashi.plugins.bedwars.BuildMode.BuildModeManager;
 import me.qrashi.plugins.bedwars.Commands.EndCommand;
 import me.qrashi.plugins.bedwars.Game.PlayType;
 import me.qrashi.plugins.bedwars.Inventories.Setup.*;
@@ -51,6 +54,7 @@ public class InventoryHandeler implements Listener {
     +: Page+ in the mapChooser (for the search)
     -: Page- in the mapChooser (for the search)
     r: reserved for RightClick, don't use!
+    b: BuildMode
     */
 
     private void handleLeftClick(char command, String arguments, Player player, boolean isRightClick) {
@@ -98,6 +102,26 @@ public class InventoryHandeler implements Listener {
                         case "close":
                             InvOpener.closeDelay(player);
                             break;
+                        case "teamman":
+                            if(BuildModeManager.isInBuild()) {
+                                InvOpener.openDelay(player, BuildInv.getTeamManager());
+                            }
+                            break;
+                        case "spawnman":
+                            if(BuildModeManager.isInBuild()) {
+                                InvOpener.openDelay(player, BuildInv.getSpawnermanager());
+                            }
+                            break;
+                        case "buildinv":
+                            if(BuildModeManager.isInBuild()) {
+                                InvOpener.openDelay(player, BuildInv.getBuildInv(player));
+                            }
+                            break;
+                        case "spawnpman":
+                            if(BuildModeManager.isInBuild()) {
+                                InvOpener.openDelay(player, BuildInv.getSpawnPointInv());
+                            }
+                            break;
                     }
                     break;
                 case 'm':
@@ -108,6 +132,21 @@ public class InventoryHandeler implements Listener {
                         } else if (BedWars.getGameManager().getPlayType() == PlayType.PLAYING) {
                             InvOpener.openDelay(player, MapChooser.getMapChooseInv(true, false, player));
                         }
+                    }
+                    break;
+                case 'b':
+                    switch (arguments) {
+                        case "rename":
+                            BuildModeManager.rename(player);
+                            break;
+                        case "team+":
+                            BedWars.getGameManager().getMap().getTeamManager().setTeams(BedWars.getGameManager().getMap().getTeamManager().getTeams() + 1);
+                            InvOpener.openDelay(player, BuildInv.getTeamManager());
+                            break;
+                        case "size+":
+                            BedWars.getGameManager().getMap().getTeamManager().setTeamSize(BedWars.getGameManager().getMap().getTeamManager().getTeamSize() + 1);
+                            InvOpener.openDelay(player, BuildInv.getTeamManager());
+                            break;
                     }
                     break;
                 case 'p':
@@ -139,6 +178,9 @@ public class InventoryHandeler implements Listener {
                             break;
                         case "newmapb":
                             SetupManager.createMapStart(player);
+                            break;
+                        case "contmap":
+                            SetupManager.mapInvFinished();
                             break;
 
 
@@ -178,7 +220,7 @@ public class InventoryHandeler implements Listener {
                             break;
                         case "eg":
                             if (EndInventory.isConfirmed()) {
-                                EndInventory.endGame();
+                                EndInventory.endGame(false, "");
                             }
                             break;
                         case "dc":
@@ -201,6 +243,7 @@ public class InventoryHandeler implements Listener {
 
     z: Special operations
     s: Spectate map
+    b: BuildMode
 
     */
 
@@ -220,8 +263,25 @@ public class InventoryHandeler implements Listener {
                 break;
             case 's':
                 if(BedWars.getMapManager().exists(arguments) && BedWars.getGameManager().getPlayType() != PlayType.LOBBY && BedWars.getGameManager().getPlayType() != PlayType.SPECTATING_MAP) {
-                    MapSpectateManager.spectate(BedWars.getMapManager().getMapByName(arguments));
+                    MapSpectateManager.spectate(BedWars.getMapManager().getMapByName(arguments), false);
                 }
+                break;
+            case 'b':
+                switch (arguments) {
+                    case "team-":
+                        if(BedWars.getGameManager().getMap().getTeamManager().getTeams() != 0) {
+                            BedWars.getGameManager().getMap().getTeamManager().setTeams(BedWars.getGameManager().getMap().getTeamManager().getTeams() - 1);
+                            InvOpener.openDelay(player, BuildInv.getTeamManager());
+                        }
+                        break;
+                    case "size-":
+                        if(BedWars.getGameManager().getMap().getTeamManager().getTeamSize() != 0) {
+                            BedWars.getGameManager().getMap().getTeamManager().setTeamSize(BedWars.getGameManager().getMap().getTeamManager().getTeamSize() - 1);
+                            InvOpener.openDelay(player, BuildInv.getTeamManager());
+                        }
+                        break;
+                }
+                break;
         }
     }
 

@@ -20,9 +20,9 @@ public class BoundingBoxActions {
         double z2 = box.getZ2();
         double vol = (Math.abs((x1 - x2)) + 1)  * (Math.abs(y1 - y2) + 1) * (Math.abs(z1 - z2) + 1);
         //Bukkit.broadcastMessage("x diff is " + Math.abs((x1 - x2)) + " y diff is " + Math.abs(y1 - y2) + " z diff is " + Math.abs(z1 - z2));
-        Bukkit.broadcastMessage(MessageCreator.t("&7Checking " + vol + " blocks."));
+        Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] Executing task &aCLEANUP&7, checking " + vol + " blocks."));
         int repl = 0;
-        int times = 0;
+        double times = 0;
         for(double i=x1; i<=x2; i++) {
             for(double f=y1; f<=y2; f++) {
                 for(double g=z1; g<=z2; g++) {
@@ -40,7 +40,11 @@ public class BoundingBoxActions {
         }
         long finish = System.nanoTime();
         long duration = (finish - start) / 1000000;
-        Bukkit.broadcastMessage(MessageCreator.t("&7Checked " + times + " blocks; Replaced " + repl + " blocks; Time: " + duration + "ms."));
+        if(times != vol) {
+            Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cERROR: &7Checked blocks &7(" + times + ") &cdo not align with calculated &7(" + vol + ") &cblocks!"));
+        }
+        Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &7Checked " + times + " blocks; Replaced " + repl + " blocks; Time: " + duration + "ms."));
+        Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &aFinished task CLEANUP."));
     }
     public static int checkEmpty(BoundingBox box) {
         long start = System.nanoTime();
@@ -52,8 +56,8 @@ public class BoundingBoxActions {
         double z2 = box.getZ2();
         double vol = (Math.abs((x1 - x2)) + 1)  * (Math.abs(y1 - y2) + 1) * (Math.abs(z1 - z2) + 1);
         //Bukkit.broadcastMessage("x diff is " + Math.abs((x1 - x2)) + " y diff is " + Math.abs(y1 - y2) + " z diff is " + Math.abs(z1 - z2));
-        Bukkit.broadcastMessage(MessageCreator.t("&7Checking " + vol + " blocks."));
-        int times = 0;
+        Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] Executing task &aCHECK_EMPTY&7, checking " + vol + " blocks."));
+        double times = 0;
         int notAir = 0;
         for(double i=x1; i<=x2; i++) {
             for(double f=y1; f<=y2; f++) {
@@ -71,7 +75,11 @@ public class BoundingBoxActions {
         }
         long finish = System.nanoTime();
         long duration = (finish - start) / 1000000;
-        Bukkit.broadcastMessage(MessageCreator.t("&7Checked " + times + " blocks; Found " + notAir + " not air blocks; Time: " + duration + "ms."));
+        if(times != vol) {
+            Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cERROR: &7Checked blocks &7(" + times + ") &cdo not align with calculated &7(" + vol + ") &cblocks!"));
+        }
+        Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &7Checked " + times + " blocks; Found " + notAir + " not air blocks; Time: " + duration + "ms."));
+        Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &aFinished task CHECK_EMPTY."));
         return notAir;
     }
 }

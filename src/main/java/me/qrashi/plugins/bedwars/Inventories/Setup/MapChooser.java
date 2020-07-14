@@ -109,7 +109,7 @@ public class MapChooser {
             if(excludeUnfinished && !BedWars.getGameManager().getMap().getAvailable()) {
                 return InventoryHandeler.createStack(Material.BARRIER, "&4&lInvalid map, choose another one", Arrays.asList("&7You have choosen an invalid map.", "&7Please &aselect another one&7 to continue."));
             } else {
-                return InventoryHandeler.createStack(Material.LIME_STAINED_GLASS_PANE, "&aEverything set", Arrays.asList("&aMap ready!", "&7You may continue now or choose another one."), true);
+                return InventoryHandeler.createStack(Material.LIME_STAINED_GLASS_PANE, "&aEverything set", Arrays.asList("&aMap ready!", "&7You may continue now or choose another one."), "p(contmap)", true);
             }
         } else {
             return InventoryHandeler.createStack(Material.RED_STAINED_GLASS_PANE, "&cNo map chosen", Arrays.asList("&7Please select a map by", "&aLeft clicking &7on it", "&7You will be able to continue afterwards."));

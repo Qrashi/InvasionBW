@@ -2,6 +2,7 @@ package me.qrashi.plugins.bedwars;
 
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBox;
 import me.qrashi.plugins.bedwars.BoundingBoxes.BoundingBoxActions;
+import me.qrashi.plugins.bedwars.BuildMode.BuildModeManager;
 import me.qrashi.plugins.bedwars.Commands.*;
 import me.qrashi.plugins.bedwars.Game.Manager;
 import me.qrashi.plugins.bedwars.Game.WorldBorderManager;
@@ -86,6 +87,7 @@ public final class BedWars extends JavaPlugin {
         Objects.requireNonNull(getCommand("save")).setExecutor(new SaveCommand());
         Objects.requireNonNull(getCommand("load")).setExecutor(new LoadCommand());
         Objects.requireNonNull(getCommand("leave")).setExecutor(new LeaveCommand());
+        Objects.requireNonNull(getCommand("build")).setExecutor(new BuildCommand());
     }
     private void listenerRegistration() {
         PluginManager pluginManager = Bukkit.getPluginManager();
@@ -129,9 +131,11 @@ public final class BedWars extends JavaPlugin {
     public void reload() {
         gameManager.reset();
         SetupManager.reset();
+        BuildModeManager.reset();
         logger.info("Reloading plugin...");
         saveMaps();
         loadMaps();
+        WorldBorderManager.forceUpdate();
     }
 
     public void saveMaps() {

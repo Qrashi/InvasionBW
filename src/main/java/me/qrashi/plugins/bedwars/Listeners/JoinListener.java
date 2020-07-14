@@ -8,6 +8,7 @@ import me.qrashi.plugins.bedwars.Inventories.MainShop;
 import me.qrashi.plugins.bedwars.Inventories.InvOpener;
 import me.qrashi.plugins.bedwars.Inventories.Setup.SetupManager;
 import me.qrashi.plugins.bedwars.Locations.Locations;
+import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -63,10 +64,20 @@ public class JoinListener implements Listener {
         }
         WorldBorderManager.forceUpdate();
         //"rejoin" listeners
-        if(SetupManager.getModeLocked() && BedWars.getGameManager().getPlayType() == PlayType.LOBBY) {
-            player.setGameMode(GameMode.CREATIVE);
-            player.sendTitle(MessageCreator.t("&6Editing the lobby"), MessageCreator.t("&aHave fun!"), 10, 150, 20);
-            playerInv.clear();
+        if(SetupManager.getModeLocked()) {
+            switch (BedWars.getGameManager().getPlayType()) {
+                case LOBBY:
+                    player.setGameMode(GameMode.CREATIVE);
+                    player.sendTitle(MessageCreator.t("&6Editing the lobby"), MessageCreator.t("&aHave fun!"), 10, 150, 20);
+                    playerInv.clear();
+                    break;
+                case BUILDING:
+                    player.setGameMode(GameMode.CREATIVE);
+                    SerializableLocation loc = BedWars.getGameManager().getMap().getLocations().getLobbyspawn().getCopy();
+                    player.teleport(loc.setY(loc.getY() + 1).getTpLocation());
+                    MessageCreator.sendTitle(player, "&aBuildMode", "&7Building " + BedWars.getGameManager().getMap().getName(), 100);
+                    break;
+            }
         }
     }
 }

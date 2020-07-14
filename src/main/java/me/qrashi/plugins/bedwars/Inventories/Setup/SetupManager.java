@@ -1,6 +1,8 @@
 package me.qrashi.plugins.bedwars.Inventories.Setup;
 
 import me.qrashi.plugins.bedwars.BedWars;
+import me.qrashi.plugins.bedwars.BuildMode.BuildModeManager;
+import me.qrashi.plugins.bedwars.Game.GameState;
 import me.qrashi.plugins.bedwars.Game.PlayType;
 import me.qrashi.plugins.bedwars.Inventories.InvOpener;
 import me.qrashi.plugins.bedwars.Inventories.InventoryHandeler;
@@ -59,6 +61,14 @@ public final class SetupManager {
         modeLocked = false;
     }
 
+    public static void mapInvFinished() {
+        if(BedWars.getGameManager().getPlayType() == PlayType.BUILDING) {
+            BedWars.getGameManager().setGameState(GameState.INGAME);
+            BedWars.getGameManager().setSetUp(true);
+            BuildModeManager.startBuild(BedWars.getGameManager().getMap());
+        }
+    }
+
     private static void createMap(String name, Player player) {
         if(BedWars.getMapManager().exists(name)) {
             player.sendMessage(MessageCreator.t("&7[&cBedWars&7] That map already exists! Try another one"));
@@ -81,7 +91,17 @@ public final class SetupManager {
             }.runTaskLater(BedWars.getInstance(), 2);
         } else {
             player.sendMessage(MessageCreator.t("&7[&cBedWars&7] Map name is valid. Please wait..."));
-            BedWars.getMapManager().makeNewMap(name);
+            for(Player players : Bukkit.getOnlinePlayers()) {
+                players.closeInventory();
+                MessageCreator.sendTitle(player, "&7Please wait!", "&cThis may lag & crash!", 2000000);
+            }
+            if(!BedWars.getMapManager().makeNewMap(name)) {
+                player.sendMessage(MessageCreator.t("&7[&cBedWars&7] &cMap invalid. CODE: ERR_MAP_NOT_EMPTY"));
+                return;
+            } else {
+                player.sendMessage(MessageCreator.t("&7[&cBedWars&7] &aYour map was created! You will now be teleported."));
+            }
+            BuildModeManager.startBuild(BedWars.getGameManager().getMap());
         }
 
     }

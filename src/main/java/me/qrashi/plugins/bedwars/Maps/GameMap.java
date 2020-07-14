@@ -43,6 +43,12 @@ public class GameMap implements Serializable {
         return this.name;
     }
 
+    public void setName(String name) {
+        if(!BedWars.getMapManager().exists(name)) {
+            this.name = name;
+        }
+    }
+
 
     public TeamManager getTeamManager() { return  teamManager; }
 

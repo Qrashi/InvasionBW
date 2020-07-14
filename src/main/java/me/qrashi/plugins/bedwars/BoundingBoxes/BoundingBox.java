@@ -38,7 +38,7 @@ public class BoundingBox implements Serializable {
     public BoundingBox(SerializableLocation loc1, SerializableLocation loc2) {
 
         /*
-        ~1 is always bigger than ~2
+        ~2 is always bigger than ~1
         */
         double x1 = loc1.getX();
         double x2 = loc2.getX();
@@ -73,12 +73,12 @@ public class BoundingBox implements Serializable {
         /*
         Returns quadratic BoundingBox
          */
-        y1 = height;
-        y2 = 0;
-        x1 = middle.getX() + radius;
-        x2 = middle.getX() - radius;
-        z1 = middle.getZ() + radius;
-        z2 = middle.getZ() - radius;
+        y1 = 0;
+        y2 = height;
+        x1 = middle.getX() - radius;
+        x2 = middle.getX() + radius;
+        z1 = middle.getZ() - radius;
+        z2 = middle.getZ() + radius;
 
     }
 
@@ -101,10 +101,16 @@ public class BoundingBox implements Serializable {
         return this.z2;
     }
     public SerializableLocation getMiddle() {
-        return new SerializableLocation(((x1 - x2) / 2) + x2, 0, ((z1 - z2) / 2) + z2);
+        return new SerializableLocation(((x2 - x1) / 2) + x1, 0, ((z2 - z1) / 2) + z1);
     }
     public double getMaxRadiusFromMiddle() {
-        return Math.abs(Math.max((x1 - x2), (z1 - z2)));
+        return Math.abs(Math.max(((x1 - x2) / 2), ((z1 - z2) / 2)));
+    }
+    public boolean isInside(SerializableLocation loc) {
+        double x = loc.getX();
+        double y = loc.getY();
+        double z = loc.getZ();
+        return ((x1 < x && x < x2) && (y1 < y && y < y2) && (z1 < z && z < z2));
     }
 
 }

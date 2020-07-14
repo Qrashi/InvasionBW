@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 public class LoadCommand implements CommandExecutor {
 
@@ -14,11 +15,11 @@ public class LoadCommand implements CommandExecutor {
     boolean canLoad = true;
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] strings) {
         if(canLoad) {
             if(confirmed) {
                 BedWars.getInstance().loadMaps();
-                commandSender.sendMessage(MessageCreator.t("&7[&cBedWars&7] &aLoaded all map data and configurations."));
+               Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &aLoaded all map data and configurations."));
                 canLoad = false;
                 new BukkitRunnable() {
                     @Override

@@ -42,6 +42,10 @@ public final class Manager {
                         if(playType == PlayType.LOBBY) {
                             sender.sendPerms("&7Lobby editing mode is &a&lenabled&7. &aHave fun editing the lobby!", "&7Lobby editing mode is &a&lenabled&7. &cEnd the mode using &4/endgame");
                         }
+                        if(playType == PlayType.BUILDING) {
+                            String mapName = BedWars.getGameManager().getMap().getName();
+                            sender.sendPerms("&7You are editing \"" + mapName + "\".", "&aEditing \"" + mapName + "\". &cEnd the game using &4/endgame&c. &7Use /build for more customisation!");
+                        }
                     }
                 }
             }
@@ -64,6 +68,9 @@ public final class Manager {
     public GameState getGameState() {
         return gameState;
     }
+    public void setGameState(GameState state) {
+        gameState = state;
+    }
 
     public PlayType getPlayType() {
         return playType;
@@ -74,11 +81,12 @@ public final class Manager {
     }
     public void finalizePlayType() {
         if(playType == PlayType.LOBBY) {
+            setUp = true;
+            gameState = GameState.INGAME;
             for(Player player : Bukkit.getOnlinePlayers()) {
                 player.setGameMode(GameMode.CREATIVE);
                 player.sendTitle(MessageCreator.t("&6Editing the lobby"), MessageCreator.t("&aHave fun!"), 10, 150, 20);
                 player.getInventory().clear();
-                setUp = true;
             }
         }
         PlayTypeLocked = true;

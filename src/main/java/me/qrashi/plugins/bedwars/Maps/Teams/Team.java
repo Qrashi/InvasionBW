@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class Team implements Serializable {
 
     private final TeamColor col;
-    private final int teamSize;
+    private int teamSize;
     private Bed bed;
     private SerializableLocation spawnLoc = null;
 
@@ -40,11 +40,14 @@ public class Team implements Serializable {
 
     public void setSpawn(int x, int y, int z) {
         spawnLoc = new SerializableLocation(x, y, z);
-
     }
     public void setSpawn(SerializableLocation newloc) {
         spawnLoc = newloc;
     }
 
     public SerializableLocation getSpawn() {return spawnLoc;}
+
+    public void setTeamSize(int newTeamSize) {
+        teamSize = newTeamSize;
+    }
 }
