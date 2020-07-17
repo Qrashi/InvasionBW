@@ -286,7 +286,7 @@ public class InventoryHandeler implements Listener {
                                     Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cGame has ended! You will be kicked soon!"));
                                     for(Player online : Bukkit.getOnlinePlayers()) {
                                         MessageCreator.sendTitle(online, "&aMap finished!", "&7Please wait...", 75);
-                                        player.setGameMode(GameMode.SPECTATOR);
+                                        online.setGameMode(GameMode.SPECTATOR);
                                         InvOpener.closeDelay(online);
                                     }
                                     new BukkitRunnable() {

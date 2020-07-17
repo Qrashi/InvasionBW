@@ -54,7 +54,7 @@ public class JoinListener implements Listener {
 
         //real listener
         Inventory playerInv = player.getInventory();
-        if(!SetupManager.getModeLocked() && !BedWars.getGameManager().isSetUp()) {
+        if(!SetupManager.getModeLocked()) {
             playerInv.clear();
             player.setGameMode(GameMode.SURVIVAL);
             player.teleport(Locations.spawn().getLocationYP());
