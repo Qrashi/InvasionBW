@@ -104,7 +104,7 @@ public class BoundingBox implements Serializable {
         return new SerializableLocation(((x2 - x1) / 2) + x1, 0, ((z2 - z1) / 2) + z1);
     }
     public double getMaxRadiusFromMiddle() {
-        return Math.abs(Math.max(((x1 - x2) / 2), ((z1 - z2) / 2)));
+        return Math.abs(Math.max(((x2 - x1) / 2), ((z2 - z1) / 2))) + 5;
     }
     public boolean isInside(SerializableLocation loc) {
         double x = loc.getX();

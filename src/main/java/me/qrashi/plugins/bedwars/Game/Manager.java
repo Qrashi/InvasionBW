@@ -25,26 +25,28 @@ public final class Manager {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if(!PlayTypeLocked) {
-                    sender.sendPerms("&cBedWars&7 is waiting for the completion of the game setup.", "&7Please &astart&7 the game using the &cbed &7item in your inventory");
-                    gameState = GameState.SETUP;
+                if(gameState == GameState.END) {
+                    sender.sendToAll("&cBedWars will shutdown soon, please wait!");
                 } else {
-                    if(playType == PlayType.BUILDING) {
-                        sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &a&lbuild&7...");
-                    }
-                    else if (playType == PlayType.PLAYING) {
-                        sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &a&lplay&7...");
-                    }
-                    else if (playType == PlayType.SPECTATING_MAP) {
-                        sender.sendPerms("&7You are spectating map \"" + MapSpectateManager.getCurrentSpectate().getSpectatingMap().getName() + "\"", "&7Stop spectating this map using &c/leave");
-                    }
-                    if(setUp) {
-                        if(playType == PlayType.LOBBY) {
-                            sender.sendPerms("&7Lobby editing mode is &a&lenabled&7. &aHave fun editing the lobby!", "&7Lobby editing mode is &a&lenabled&7. &cEnd the mode using &4/endgame");
+                    if (!PlayTypeLocked) {
+                        sender.sendPerms("&cBedWars&7 is waiting for the completion of the game setup.", "&7Please &astart&7 the game using the &cbed &7item in your inventory");
+                        gameState = GameState.SETUP;
+                    } else {
+                        if (playType == PlayType.BUILDING) {
+                            sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &a&lbuild&7...");
+                        } else if (playType == PlayType.PLAYING) {
+                            sender.sendToAll("&7The &cadmins&7 are &achoosing a map&7 to &a&lplay&7...");
+                        } else if (playType == PlayType.SPECTATING_MAP) {
+                            sender.sendPerms("&7You are spectating map \"" + MapSpectateManager.getCurrentSpectate().getSpectatingMap().getName() + "\"", "&7Stop spectating this map using &c/leave");
                         }
-                        if(playType == PlayType.BUILDING) {
-                            String mapName = BedWars.getGameManager().getMap().getName();
-                            sender.sendPerms("&7You are editing \"" + mapName + "\".", "&aEditing \"" + mapName + "\". &cEnd the game using &4/endgame&c. &7Use /build for more customisation!");
+                        if (setUp) {
+                            if (playType == PlayType.LOBBY) {
+                                sender.sendPerms("&7Lobby editing mode is &a&lenabled&7. &aHave fun editing the lobby!", "&7Lobby editing mode is &a&lenabled&7. &cEnd the mode using &4/endgame");
+                            }
+                            if (playType == PlayType.BUILDING) {
+                                String mapName = BedWars.getGameManager().getMap().getName();
+                                sender.sendPerms("&7You are editing \"" + mapName + "\".", "&aEditing \"" + mapName + "\". &cEnd the game using &4/endgame&c. &7Use /build for more customisation!");
+                            }
                         }
                     }
                 }

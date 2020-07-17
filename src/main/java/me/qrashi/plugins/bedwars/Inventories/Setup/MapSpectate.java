@@ -21,8 +21,7 @@ public class MapSpectate {
 
     public void startSpectate(boolean creative) {
         BedWars.getGameManager().setPlayType(PlayType.SPECTATING_MAP);
-        SerializableLocation location = spectatingMap.getBox().getMiddle();
-        location.setY(spectatingMap.getLocations().getSpecspawn().getY());
+        SerializableLocation location = spectatingMap.getLocations().getLobbyspawn().getCopy();
         Location toTp = location.getTpLocation();
         for(Player player : Bukkit.getOnlinePlayers()) {
             player.setGameMode(GameMode.SPECTATOR);

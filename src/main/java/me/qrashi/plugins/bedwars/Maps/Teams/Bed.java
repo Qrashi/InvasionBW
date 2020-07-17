@@ -9,16 +9,13 @@ import java.io.Serializable;
 public class Bed implements Serializable {
 
     private SerializableLocation loc;
-    private Team team;
     private boolean destroyed;
 
-    public Bed(SerializableLocation location, Team correspondingTeam) {
+    public Bed(SerializableLocation location) {
         loc = location;
-        this.team = correspondingTeam;
     }
-    public Bed(int x, int y, int z, Team correspondingTeam) {
+    public Bed(int x, int y, int z) {
         loc = new SerializableLocation(x, y, z);
-        this.team = correspondingTeam;
     }
 
     public void destroy() {
@@ -34,6 +31,9 @@ public class Bed implements Serializable {
         this.loc = loc;
     }
 
+    public SerializableLocation getLoc() {
+        return loc;
+    }
     public void revive() {
         destroyed = false;
         BedWars.getWorld().getBlockAt(loc.getLocation()).setType(Material.RED_BED);
@@ -41,10 +41,6 @@ public class Bed implements Serializable {
 
     public void reset() {
         destroyed = false;
-    }
-
-    public Team getTeam() {
-        return team;
     }
 
 }

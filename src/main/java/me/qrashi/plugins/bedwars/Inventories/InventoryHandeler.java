@@ -2,21 +2,29 @@ package me.qrashi.plugins.bedwars.Inventories;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.BuildMode.BuildInv;
-import me.qrashi.plugins.bedwars.BuildMode.BuildMode;
 import me.qrashi.plugins.bedwars.BuildMode.BuildModeManager;
-import me.qrashi.plugins.bedwars.Commands.EndCommand;
+import me.qrashi.plugins.bedwars.Game.GameState;
 import me.qrashi.plugins.bedwars.Game.PlayType;
-import me.qrashi.plugins.bedwars.Inventories.Setup.*;
+import me.qrashi.plugins.bedwars.Inventories.Setup.MapChooser;
+import me.qrashi.plugins.bedwars.Inventories.Setup.MapSpectateManager;
+import me.qrashi.plugins.bedwars.Inventories.Setup.SearchManager;
+import me.qrashi.plugins.bedwars.Inventories.Setup.SetupManager;
+import me.qrashi.plugins.bedwars.Maps.Spawners.Spawner;
+import me.qrashi.plugins.bedwars.Maps.Spawners.SpawnerType;
+import me.qrashi.plugins.bedwars.Maps.Teams.Bed;
+import me.qrashi.plugins.bedwars.Maps.Teams.Team;
+import me.qrashi.plugins.bedwars.Maps.Teams.TeamManager;
+import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 import me.qrashi.plugins.bedwars.Players.PlayerData;
 import me.qrashi.plugins.bedwars.Utils.MessageCreator;
+import me.qrashi.plugins.bedwars.Utils.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -32,8 +40,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -55,9 +65,13 @@ public class InventoryHandeler implements Listener {
     -: Page- in the mapChooser (for the search)
     r: reserved for RightClick, don't use!
     b: BuildMode
+    d: BuildMode (set beD)
+    l: BuildMode (set spawnLocation)
+    i: BuildMode (set beD)
+    f: FeedBack inventory
     */
 
-    private void handleLeftClick(char command, String arguments, Player player, boolean isRightClick) {
+    private boolean handleLeftClick(char command, String arguments, Player player, boolean isRightClick, Block clicked) {
         if (isRightClick) {
             if (command == 'r') {
                 char commandRightClick = arguments.charAt(0);
@@ -69,6 +83,11 @@ public class InventoryHandeler implements Listener {
             }
         } else {
             switch (command) {
+                case 'f':
+                    if(BedWars.getGameManager().getGameState() == GameState.END) {
+                        player.sendMessage(MessageCreator.t("&7[&aFeedback&7] Thank you for your feedback!"));
+                        InvOpener.closeDelay(player);
+                    }
                 case 's':
                     switch (arguments) {
                         case "main":
@@ -134,19 +153,169 @@ public class InventoryHandeler implements Listener {
                         }
                     }
                     break;
+                case 'i':
+                    if(BuildModeManager.isInBuild()) {
+                        TeamManager teamManager = BedWars.getGameManager().getMap().getTeamManager();
+                        int team = Integer.parseInt(arguments);
+                        if(teamManager.isInList(team)) {
+                            if(clicked != null) {
+                                Bed oldBed = BedWars.getGameManager().getMap().getTeamManager().getTeamByInt(team).getBed();
+                                if(oldBed != null) {
+                                    SerializableLocation oldBedLoc = oldBed.getLoc();
+                                    player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] &cDestroying old bed..."));
+                                    Block oldBedBlock = oldBedLoc.getBlock();
+                                    oldBedBlock.setType(Material.AIR);
+                                    oldBedBlock.getState().update();
+                                    for(BlockFace face : BlockFace.values()) {
+                                        oldBedBlock.getRelative(face, 1).getState().update();
+                                    }
+                                }
+                                BedWars.getGameManager().getMap().getTeamManager().getTeamByInt(team).updateBed(new Bed(new SerializableLocation(clicked)));
+                                player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] Registered bed for team " + Utils.getTeamName(teamManager.getTeamByInt(team))));
+                                MessageCreator.sendTitle(player, "&aSuccess!", "&7Set the bed of [" + Utils.getTeamName(teamManager.getTeamByInt(team)) + "&7]", 75);
+                            }
+                        }
+                    }
+                    return false;
+                case 'd':
+                    if(BuildModeManager.isInBuild()) {
+                        TeamManager teamManager = BedWars.getGameManager().getMap().getTeamManager();
+                        int team = Integer.parseInt(arguments);
+                        if(teamManager.isInList(team)) {
+                            player.getInventory().setItem(0, createStack(Material.RED_BED, "&cBed&aRegisterer &7[" + Utils.getTeamName(teamManager.getTeamByInt(team)) + "&7]" , Arrays.asList("&a&l+ &aPlace a bed to register it!"), "i(" + team + ")"));
+                            player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] Place the bed to register it! &7[" + Utils.getTeamName(teamManager.getTeamByInt(team)) + "&7]"));
+                            InvOpener.closeDelay(player);
+                        }
+                    }
+                    break;
                 case 'b':
-                    switch (arguments) {
-                        case "rename":
-                            BuildModeManager.rename(player);
-                            break;
-                        case "team+":
-                            BedWars.getGameManager().getMap().getTeamManager().setTeams(BedWars.getGameManager().getMap().getTeamManager().getTeams() + 1);
-                            InvOpener.openDelay(player, BuildInv.getTeamManager());
-                            break;
-                        case "size+":
-                            BedWars.getGameManager().getMap().getTeamManager().setTeamSize(BedWars.getGameManager().getMap().getTeamManager().getTeamSize() + 1);
-                            InvOpener.openDelay(player, BuildInv.getTeamManager());
-                            break;
+                    if(BuildModeManager.isInBuild()) {
+                        switch (arguments) {
+                            case "rename":
+                                BuildModeManager.rename(player);
+                                break;
+                            case "team+":
+                                if(BedWars.getGameManager().getMap().getTeamManager().getTeams() != 4) {
+                                    BedWars.getGameManager().getMap().getTeamManager().setTeams(BedWars.getGameManager().getMap().getTeamManager().getTeams() + 1);
+                                    InvOpener.openDelay(player, BuildInv.getTeamManager());
+                                }
+                                break;
+                            case "size+":
+                                BedWars.getGameManager().getMap().getTeamManager().setTeamSize(BedWars.getGameManager().getMap().getTeamManager().getTeamSize() + 1);
+                                InvOpener.openDelay(player, BuildInv.getTeamManager());
+                                break;
+                            case "specloc":
+                                SerializableLocation toSetS = new SerializableLocation(player);
+                                BedWars.getGameManager().getMap().getLocations().setSpecspawn(toSetS);
+                                InvOpener.closeDelay(player);
+                                player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] &aSuccessfully &7set the spectator spawn to your location."));
+                                break;
+                            case "lobbyloc":
+                                SerializableLocation toSetL = new SerializableLocation(player);
+                                BedWars.getGameManager().getMap().getLocations().setLobbyspawn(toSetL);
+                                InvOpener.closeDelay(player);
+                                player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] &aSuccessfully &7set the lobbyspawn to your location."));
+                                break;
+                            case "settime":
+                                BuildModeManager.setTime(player);
+                                break;
+                            case "create_gold":
+                                player.getInventory().setItem(0, createStack(Material.GOLD_BLOCK, "&6Create a gold spawner", "b(gold)"));
+                                player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] Place this block &babove/next to/under &7your spawner and &cnot as a replacement!"));
+                                InvOpener.closeDelay(player);
+                                break;
+                            case "create_iron":
+                                player.getInventory().setItem(0, createStack(Material.IRON_BLOCK, "&6Create a &firon&6 spawner", "b(iron)"));
+                                player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] Place this block &babove/next to/under &7your spawner and &cnot as a replacement!"));
+                                InvOpener.closeDelay(player);
+                                break;
+                            case "create_bronze":
+                                player.getInventory().setItem(0, createStack(Material.BROWN_TERRACOTTA, "&6Create a &cbronze&6 spawner", "b(bronze)"));
+                                player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] Place this block &babove/next to/under &7your spawner and &cnot as a replacement!"));
+                                InvOpener.closeDelay(player);
+                                break;
+                            case "gold":
+                                if(clicked != null) {
+                                    //Bukkit.broadcastMessage("k reg");
+                                    BuildModeManager.createSpawner(SpawnerType.GOLD, clicked, player);
+                                    InvOpener.closeDelay(player);
+                                    return false;
+                                }
+                                break;
+                            case "bronze":
+                                if(clicked != null) {
+                                    //Bukkit.broadcastMessage("k reg");
+                                    BuildModeManager.createSpawner(SpawnerType.BRONZE, clicked, player);
+                                    InvOpener.closeDelay(player);
+                                    return false;
+                                }
+                                break;
+                            case "iron":
+                                if(clicked != null) {
+                                    //Bukkit.broadcastMessage("k reg");
+                                    BuildModeManager.createSpawner(SpawnerType.IRON, clicked, player);
+                                    InvOpener.closeDelay(player);
+                                    return false;
+                                }
+                                break;
+                            case "delspawner":
+                                if(clicked != null) {
+                                    //Bukkit.broadcastMessage("k reg");
+                                    BuildModeManager.deleteSpawner(clicked, player);
+                                    InvOpener.closeDelay(player);
+                                    return false;
+                                }
+                                break;
+                            case "1clear":
+                                player.getInventory().setItem(0, new ItemStack(Material.AIR));
+                                InvOpener.closeDelay(player);
+                                break;
+                            case "despawner":
+                                player.getInventory().setItem(0, createStack(Material.RED_WOOL, "&cSpawner despawner", Arrays.asList("&7Left click on a block to", "delete potential spawners."), "b(delspawner)"));
+                                player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] Place this block &babove/next to/under &7the potential spawner and &cnot as a replacement!"));
+                                InvOpener.closeDelay(player);
+                                break;
+                            case "teamsett":
+                                InvOpener.openDelay(player, BuildInv.getTeamManagerTeamsInv());
+                                break;
+                            case "finish":
+                                if(BuildModeManager.checkReady()) {
+                                    InvOpener.closeDelay(player);
+                                    BedWars.getGameManager().getMap().setAvailable(true);
+                                    BedWars.getGameManager().setGameState(GameState.END);
+                                    Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cGame has ended! You will be kicked soon!"));
+                                    for(Player online : Bukkit.getOnlinePlayers()) {
+                                        MessageCreator.sendTitle(online, "&aMap finished!", "&7Please wait...", 75);
+                                        player.setGameMode(GameMode.SPECTATOR);
+                                        InvOpener.closeDelay(online);
+                                    }
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            for (Player online : Bukkit.getOnlinePlayers()) {
+                                                InvOpener.openDelay(online, FeedbackInv.getFeedbackInv());
+                                            }
+                                        }
+                                    }.runTaskLater(BedWars.getInstance(), 40);
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            for(Player online : Bukkit.getOnlinePlayers()) {
+                                                MessageCreator.sendTitle(online, "&aBuildMode", "&7Leaving BuildMode", 75);
+                                                Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cServer will reset in 10 seconds!"));
+                                            }
+                                        }
+
+                                    }.runTaskLater(BedWars.getInstance(), 100);
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cBuilding has ended!"));
+                                            EndInventory.endGame(false, "");
+                                        }
+                                    }.runTaskLater(BedWars.getInstance(), 200);
+                                }
+                        }
                     }
                     break;
                 case 'p':
@@ -235,6 +404,7 @@ public class InventoryHandeler implements Listener {
                     break;
             }
         }
+        return true;
     }
 
     /*
@@ -267,21 +437,78 @@ public class InventoryHandeler implements Listener {
                 }
                 break;
             case 'b':
-                switch (arguments) {
-                    case "team-":
-                        if(BedWars.getGameManager().getMap().getTeamManager().getTeams() != 0) {
-                            BedWars.getGameManager().getMap().getTeamManager().setTeams(BedWars.getGameManager().getMap().getTeamManager().getTeams() - 1);
-                            InvOpener.openDelay(player, BuildInv.getTeamManager());
-                        }
-                        break;
-                    case "size-":
-                        if(BedWars.getGameManager().getMap().getTeamManager().getTeamSize() != 0) {
-                            BedWars.getGameManager().getMap().getTeamManager().setTeamSize(BedWars.getGameManager().getMap().getTeamManager().getTeamSize() - 1);
-                            InvOpener.openDelay(player, BuildInv.getTeamManager());
-                        }
-                        break;
+                if(BuildModeManager.isInBuild()) {
+                    switch (arguments) {
+                        case "team-":
+                            if (BedWars.getGameManager().getMap().getTeamManager().getTeams() != 2) {
+                                BedWars.getGameManager().getMap().getTeamManager().setTeams(BedWars.getGameManager().getMap().getTeamManager().getTeams() - 1);
+                                InvOpener.openDelay(player, BuildInv.getTeamManager());
+                            }
+                            break;
+                        case "size-":
+                            if (BedWars.getGameManager().getMap().getTeamManager().getTeamSize() != 1) {
+                                BedWars.getGameManager().getMap().getTeamManager().setTeamSize(BedWars.getGameManager().getMap().getTeamManager().getTeamSize() - 1);
+                                InvOpener.openDelay(player, BuildInv.getTeamManager());
+                            }
+                            break;
+                        case "specloc":
+                            player.teleport(BedWars.getGameManager().getMap().getLocations().getSpecspawn().getLocationYP());
+                            player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] Warped you to the spectator spawnpoint"));
+                            InvOpener.closeDelay(player);
+                            break;
+                        case "lobbyloc":
+                            player.teleport(BedWars.getGameManager().getMap().getLocations().getLobbyspawn().getLocationYP());
+                            player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] Warped you to the lobby spawnpoint"));
+                            InvOpener.closeDelay(player);
+                            break;
+                        case "delete_gold":
+                            List<Spawner> roRemoveG = new ArrayList<>(Collections.emptyList());
+                            for(Spawner spawner : BedWars.getGameManager().getMap().getLocations().getSpawners()) {
+                                if(spawner.getType() == SpawnerType.GOLD) {
+                                    roRemoveG.add(spawner);
+                                }
+                            }
+                            BedWars.getGameManager().getMap().getLocations().removeSpawner(roRemoveG);
+                            InvOpener.openDelay(player, BuildInv.getSpawnermanager());
+                            player.sendMessage(MessageCreator.t("&7[&aBuildMode&7]&c Deleted ALL &6gold &cspawners!"));
+                            break;
+                        case "delete_iron":
+                            List<Spawner> roRemoveI = new ArrayList<>(Collections.emptyList());
+                            for(Spawner spawner : BedWars.getGameManager().getMap().getLocations().getSpawners()) {
+                                if(spawner.getType() == SpawnerType.IRON) {
+                                    roRemoveI.add(spawner);
+                                }
+                            }
+                            BedWars.getGameManager().getMap().getLocations().removeSpawner(roRemoveI);
+                            player.sendMessage(MessageCreator.t("&7[&aBuildMode&7]&c Deleted ALL &firon &cspawners!"));
+                            InvOpener.openDelay(player, BuildInv.getSpawnermanager());
+                            break;
+                        case "delete_bronze":
+                            List<Spawner> roRemoveB = new ArrayList<>(Collections.emptyList());
+                            for(Spawner spawner : BedWars.getGameManager().getMap().getLocations().getSpawners()) {
+                                if(spawner.getType() == SpawnerType.BRONZE) {
+                                    roRemoveB.add(spawner);
+                                }
+                            }
+                            BedWars.getGameManager().getMap().getLocations().removeSpawner(roRemoveB);
+                            InvOpener.openDelay(player, BuildInv.getSpawnermanager());
+                            player.sendMessage(MessageCreator.t("&7[&aBuildMode&7]&c Deleted ALL bronze &cspawners!"));
+                            break;
+                    }
                 }
                 break;
+            case 'l':
+                if(BuildModeManager.isInBuild()) {
+                    TeamManager teamManager = BedWars.getGameManager().getMap().getTeamManager();
+                    int team = Integer.parseInt(arguments);
+                    if(teamManager.isInList(team)) {
+                        Team toEdit = teamManager.getTeamByInt(team);
+                        toEdit.setSpawn(new SerializableLocation(player.getLocation()));
+                        MessageCreator.sendTitle(player, "&aSuccess!", "&7Set the respawn location", 60);
+                        player.sendMessage(MessageCreator.t("&7[&aBuildMode&7] Set the team respawn location to your location!"));
+                        InvOpener.closeDelay(player);
+                    }
+                }
         }
     }
 
@@ -400,7 +627,7 @@ public class InventoryHandeler implements Listener {
                                             //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
                                             String args = arg.toString();
                                             if (event.getAction() != InventoryAction.PICKUP_HALF) {
-                                                handleLeftClick(command, args, playerP, false);
+                                                handleLeftClick(command, args, playerP, false, null);
                                             } else {
                                                 if(lore.size() > 2) {
                                                     String commandrawRight = ChatColor.stripColor(lore.get(lore.size() - 3));
@@ -410,7 +637,7 @@ public class InventoryHandeler implements Listener {
                                                     //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
                                                     String argsRight = argRight.toString();
                                                     //Bukkit.broadcastMessage("Command: " + commandRight + " Args: " + argsRight);
-                                                    handleLeftClick(commandRight, argsRight, playerP, true);
+                                                    event.setCancelled(handleLeftClick(commandRight, argsRight, playerP, true, null));
                                                 }
                                             }
                                         }
@@ -452,7 +679,7 @@ public class InventoryHandeler implements Listener {
                                             IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                             //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
                                             String args = arg.toString();
-                                            handleLeftClick(command, args, playerP, false);
+                                            event.setCancelled(handleLeftClick(command, args, playerP, false, null));
                                             }
                                         }
                                     }
@@ -493,8 +720,15 @@ public class InventoryHandeler implements Listener {
                                                 StringBuilder arg = new StringBuilder();
                                                 IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                                 //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
+                                                Block relative_block = null;
                                                 String args = arg.toString();
-                                                handleLeftClick(command, args, playerP, false);
+                                                Block clicked_block = event.getClickedBlock();
+                                                if(clicked_block != null && event.getBlockFace() != null) {
+                                                    relative_block = clicked_block.getRelative(event.getBlockFace(), 1);
+                                                } else {
+                                                    relative_block = event.getClickedBlock();
+                                                }
+                                                event.setCancelled(handleLeftClick(command, args, playerP, false, relative_block));
                                             }
                                         }
                                     }
@@ -534,7 +768,7 @@ public class InventoryHandeler implements Listener {
                                         IntStream.range(2, commandraw.length() - 1).forEachOrdered(n -> arg.append(commandraw.charAt(n)));
                                         //Bukkit.broadcastMessage("Command: " + command + " Action: " + arg);
                                         String args = arg.toString();
-                                        handleLeftClick(command, args, playerP, false);
+                                        event.setCancelled(handleLeftClick(command, args, playerP, false, null));
                                     }
                                 }
                             }

@@ -6,13 +6,14 @@ import me.qrashi.plugins.bedwars.Maps.Spawners.SpawnerType;
 import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class LocationSaver implements Serializable {
 
-    private List<Spawner> spawners = Collections.emptyList();
-    private List<Shop> shops = Collections.emptyList();
+    private ArrayList<Spawner> spawners = new ArrayList<>();
+    private ArrayList<Shop> shops = new ArrayList<>();
     private SerializableLocation specspawn;
     private SerializableLocation lobbyspawn;
 
@@ -27,6 +28,10 @@ public class LocationSaver implements Serializable {
     }
     public void addSpawner(SpawnerType type, int x, int y, int z) {
         spawners.add(new Spawner(type, x, y, z));
+
+    }
+    public void addSpawner(SpawnerType type, SerializableLocation loc) {
+        spawners.add(new Spawner(type, loc));
 
     }
 
@@ -77,5 +82,14 @@ public class LocationSaver implements Serializable {
 
     public void setSpecspawn(SerializableLocation specspawn) {
         this.specspawn = specspawn;
+    }
+
+    public void removeSpawner(Spawner spawner) {
+        spawners.remove(spawner);
+    }
+    public void removeSpawner(List<Spawner> toRemove) {
+        for(Spawner spawner : toRemove) {
+            spawners.remove(spawner);
+        }
     }
 }

@@ -40,4 +40,12 @@ public class InvOpener {
             }
         }.runTaskLater(BedWars.getInstance(), 1L);
     }
+    public static void closeLater(Player player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.closeInventory();
+            }
+        }.runTaskLater(BedWars.getInstance(), 15L);
+    }
 }

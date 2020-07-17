@@ -19,6 +19,7 @@ public class GameMap implements Serializable {
     private boolean avialible;
     private LocationSaver locs;
     private TeamManager teamManager;
+    private MapTimeHolder timeHolder;
 
     public GameMap(String name, int teamNum, int teamSize, BoundingBox box, SerializableLocation toStart) {
         construct(name, teamNum, teamSize, box, toStart);
@@ -37,6 +38,7 @@ public class GameMap implements Serializable {
         this.teamManager = new TeamManager(teamList);
         this.avialible = false;
         locs = new LocationSaver(toStart);
+        timeHolder = new MapTimeHolder();
     }
 
     public String getName() {
@@ -64,10 +66,17 @@ public class GameMap implements Serializable {
         this.avialible = available;
     }
 
+    public void resetTime() {
+        timeHolder = new MapTimeHolder();
+    }
+
     public LocationSaver getLocations() {
         return locs;
     }
     public void clear() {
         BoundingBoxActions.replace(BedWars.getUtils().getMaterialList(), bbox);
+    }
+    public MapTimeHolder getTimeHolder() {
+        return timeHolder;
     }
 }

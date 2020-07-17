@@ -21,3 +21,6 @@ commands:
   build:
     description: Opens the build inventory
     permission: BedWars.openBuild
+  r:
+    descripton: fast reload ;)
+    permission: BedWars.FastReload

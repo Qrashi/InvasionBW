@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class WorldBorderManager {
 
     public static void forceUpdate() {
+        DayTimeManager.forceUpdate();
         WorldBorder wb = BedWars.getWorld().getWorldBorder();
         if(MapSpectateManager.isIsSpectating()) {
             wb.setCenter(MapSpectateManager.getCurrentSpectate().getSpectatingMap().getBox().getMiddle().getLocation());

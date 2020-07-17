@@ -19,7 +19,7 @@ public final class Utils {
         return materialList;
     }
 
-    public String getTeamName(Team team) {
+    public static String getTeamName(Team team) {
         switch (team.getCol()) {
             case RED:
                 return MessageCreator.t("&cTeam Red");
@@ -31,6 +31,19 @@ public final class Utils {
                 return MessageCreator.t("&eTeam Yellow");
         }
     return "";
+    }
+    public static Material teamToMaterial(Team team) {
+        switch (team.getCol()) {
+            case BLUE:
+                return Material.BLUE_TERRACOTTA;
+            case RED:
+                return Material.RED_TERRACOTTA;
+            case GREEN:
+                return Material.GREEN_TERRACOTTA;
+            case YELLOW:
+                return Material.YELLOW_TERRACOTTA;
+        }
+        return Material.WHITE_WOOL;
     }
 
     public static TeamColor numToCol(int num) {

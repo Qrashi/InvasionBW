@@ -16,10 +16,12 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -75,9 +77,16 @@ public class JoinListener implements Listener {
                     player.setGameMode(GameMode.CREATIVE);
                     SerializableLocation loc = BedWars.getGameManager().getMap().getLocations().getLobbyspawn().getCopy();
                     player.teleport(loc.setY(loc.getY() + 1).getTpLocation());
+                    player.getInventory().clear();
                     MessageCreator.sendTitle(player, "&aBuildMode", "&7Building " + BedWars.getGameManager().getMap().getName(), 100);
+                    player.setFlying(true);
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 100, 0.1F);
                     break;
             }
         }
+    }
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        event.setQuitMessage(MessageCreator.t("&7[&c-&7] " + event.getPlayer().getName()));
     }
 }

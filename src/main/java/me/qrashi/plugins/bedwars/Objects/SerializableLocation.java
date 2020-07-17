@@ -2,6 +2,9 @@ package me.qrashi.plugins.bedwars.Objects;
 
 import me.qrashi.plugins.bedwars.BedWars;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 import java.io.Serializable;
 
@@ -17,6 +20,14 @@ public class SerializableLocation implements Serializable {
         x = loc.getX();
         y = loc.getY();
         z = loc.getZ();
+    }
+    public SerializableLocation(Player ploc) {
+        Location loc = ploc.getLocation();
+        x = loc.getX();
+        y = loc.getY();
+        z = loc.getZ();
+        yaw = Math.round(loc.getYaw());
+        pitch = Math.round(loc.getPitch());
     }
 
     public SerializableLocation(int xc, int yc,  int zc) {
@@ -43,6 +54,21 @@ public class SerializableLocation implements Serializable {
         z = v2;
         yaw = ya;
         pitch = pi;
+    }
+    public SerializableLocation(Block block) {
+        x = block.getX();
+        y = block.getY();
+        z = block.getZ();
+    }
+
+    public boolean isTpAble() {
+        return (getBlock().getType() != Material.AIR && getCopy().add(0, 1, 0).getBlock().getType() != Material.AIR);
+    }
+    public SerializableLocation add(double xp, double yp, double zp) {
+        x = x + xp;
+        y = y + yp;
+        z = z + zp;
+        return this;
     }
 
     public int getPitch() {
@@ -94,6 +120,7 @@ public class SerializableLocation implements Serializable {
     public SerializableLocation setX(double x) {
         this.x = x;return this;
     }
+
     public SerializableLocation setZ(double z) { this.z = z; return this;}
     public Location getLocationYP() {
         return new Location(BedWars.getWorld(), x, y, z, yaw, pitch);
@@ -115,5 +142,8 @@ public class SerializableLocation implements Serializable {
     }
     public SerializableLocation getCopy() {
         return new SerializableLocation(x, y, z, yaw, pitch);
+    }
+    public Block getBlock() {
+        return BedWars.getWorld().getBlockAt(getLocation());
     }
 }

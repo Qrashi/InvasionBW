@@ -68,6 +68,7 @@ public final class MapManager implements Serializable {
     public boolean isIntInList(int i) {
         return i < mapList.size();
     }
+    public ArrayList<GameMap> getMapList() {return mapList;}
 
     public boolean makeNewMap(String name) {
         /*
@@ -82,8 +83,8 @@ public final class MapManager implements Serializable {
         Location toTp = copyLoc.getTpLocation();
         for(Player player : Bukkit.getOnlinePlayers()) {
             player.setAllowFlight(true);
-            player.setFlying(true);
             player.teleport(toTp);
+            player.setFlying(true);
         }
         BoundingBox boundingBox = new BoundingBox(startLoc, 450, 200);
         int notAir = BoundingBoxActions.checkEmpty(boundingBox);

@@ -15,12 +15,14 @@ import me.qrashi.plugins.bedwars.Objects.SerializableLocation;
 import me.qrashi.plugins.bedwars.Players.PlayerDataManager;
 import me.qrashi.plugins.bedwars.Utils.BarSender;
 import me.qrashi.plugins.bedwars.Utils.FileManager;
+import me.qrashi.plugins.bedwars.Utils.MessageCreator;
 import me.qrashi.plugins.bedwars.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,6 +74,12 @@ public final class BedWars extends JavaPlugin {
         for(Player player : Bukkit.getOnlinePlayers()) {
             setWorld(player.getLocation().getWorld());
         }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bukkit.broadcastMessage(MessageCreator.t("&7[&cBedWars&7] &cBedWars &astarted!"));
+            }
+        }.runTaskLater(BedWars.getInstance(), 1);
     }
 
     @Override
@@ -88,6 +96,7 @@ public final class BedWars extends JavaPlugin {
         Objects.requireNonNull(getCommand("load")).setExecutor(new LoadCommand());
         Objects.requireNonNull(getCommand("leave")).setExecutor(new LeaveCommand());
         Objects.requireNonNull(getCommand("build")).setExecutor(new BuildCommand());
+        Objects.requireNonNull(getCommand("r")).setExecutor(new RCommand());
     }
     private void listenerRegistration() {
         PluginManager pluginManager = Bukkit.getPluginManager();
@@ -164,6 +173,17 @@ public final class BedWars extends JavaPlugin {
             toLoad.add(new GameMap("&cError while importing maps!", 0, 0, new BoundingBox(-0, 0, 0, 0, 0, 0), new SerializableLocation(0, 0, 0)));
             mapManager.load(toLoad);
             logger.warning("Loaded backup maps...");
+        }
+        boolean saveAfter = false;
+        for (GameMap map : mapManager.getMapList()) {
+            if(map.getTimeHolder() == null) {
+                map.resetTime();
+                logger.info("Found old map data - updating it...");
+                saveAfter = true;
+            }
+        }
+        if(saveAfter) {
+            saveMaps();
         }
         logger.info("Maps loaded.");
     }

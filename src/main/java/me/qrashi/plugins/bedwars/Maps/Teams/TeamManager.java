@@ -3,6 +3,7 @@ package me.qrashi.plugins.bedwars.Maps.Teams;
 import me.qrashi.plugins.bedwars.BedWars;
 import me.qrashi.plugins.bedwars.Utils.Utils;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,9 @@ public class TeamManager implements Serializable {
         }
     return null;
     }
+    public boolean isInList(int i) {
+        return teams.size() > i;
+    }
     public int getTeams() {
         return teams.size();
     }
@@ -51,6 +55,10 @@ public class TeamManager implements Serializable {
             team.setTeamSize(teamSize);
         }
     }
+    public Team getTeamByInt(int teamNum) {
+        return  teams.get(teamNum);
+    }
+    public List<Team> getTeamList() {return teams;}
 
 
 }

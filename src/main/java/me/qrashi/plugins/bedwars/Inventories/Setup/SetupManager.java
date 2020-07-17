@@ -92,16 +92,21 @@ public final class SetupManager {
         } else {
             player.sendMessage(MessageCreator.t("&7[&cBedWars&7] Map name is valid. Please wait..."));
             for(Player players : Bukkit.getOnlinePlayers()) {
-                players.closeInventory();
-                MessageCreator.sendTitle(player, "&7Please wait!", "&cThis may lag & crash!", 2000000);
+                InvOpener.closeLater(players);
+                MessageCreator.sendTitle(players, "&7Please wait!", "&cThis may lag & crash!", 2000000);
             }
-            if(!BedWars.getMapManager().makeNewMap(name)) {
-                player.sendMessage(MessageCreator.t("&7[&cBedWars&7] &cMap invalid. CODE: ERR_MAP_NOT_EMPTY"));
-                return;
-            } else {
-                player.sendMessage(MessageCreator.t("&7[&cBedWars&7] &aYour map was created! You will now be teleported."));
-            }
-            BuildModeManager.startBuild(BedWars.getGameManager().getMap());
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if(!BedWars.getMapManager().makeNewMap(name)) {
+                        player.sendMessage(MessageCreator.t("&7[&cBedWars&7] &cMap invalid. CODE: ERR_MAP_NOT_EMPTY"));
+                        return;
+                    } else {
+                        player.sendMessage(MessageCreator.t("&7[&cBedWars&7] &aYour map was created! You will now be teleported."));
+                    }
+                    BuildModeManager.startBuild(BedWars.getGameManager().getMap());
+                }
+            }.runTaskLater(BedWars.getInstance(), 20);
         }
 
     }
@@ -114,7 +119,7 @@ public final class SetupManager {
                         .onComplete((player, text) -> {
                             if (player.getUniqueId().equals(clickedPlayer.getUniqueId())) {
                                 createMap(text, player);
-                                InvOpener.closeDelay(player);
+                                InvOpener.closeLater(player);
                             }
                             return AnvilGUI.Response.text("Checking map...");
                         })
