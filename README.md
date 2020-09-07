@@ -1,6 +1,5 @@
-# Invasion BW
+# Attention! This project has moved to gitlab!
 
-This will be a BedWars plugin, custom built fro the InvasionNetwork.
+URL: https://gitlab.com/Qrashi/InvasionBW
 
-This plugin was created by thr InvasionDevs and you may use it for your server.
-We don't provide ANY support.
+THIS PROJECT WON'T RECIEVE ANY UPDATES!
