@@ -26,7 +26,6 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <outputDirectory>/home/fritz/minecraft-dev/LightBW/plugins</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
